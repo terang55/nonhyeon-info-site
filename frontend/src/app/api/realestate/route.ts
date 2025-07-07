@@ -75,18 +75,18 @@ export async function GET(): Promise<NextResponse> {
       const numOfRows = 100;
 
       while (true) {
-        const apiUrl = new URL(MOLIT_BASE_URL);
-        apiUrl.searchParams.append('serviceKey', MOLIT_API_KEY);
-        apiUrl.searchParams.append('LAWD_CD', AREA_CODE);
-        apiUrl.searchParams.append('DEAL_YMD', yearMonth);
+      const apiUrl = new URL(MOLIT_BASE_URL);
+      apiUrl.searchParams.append('serviceKey', MOLIT_API_KEY);
+      apiUrl.searchParams.append('LAWD_CD', AREA_CODE);
+      apiUrl.searchParams.append('DEAL_YMD', yearMonth);
         apiUrl.searchParams.append('numOfRows', numOfRows.toString());
         apiUrl.searchParams.append('pageNo', pageNo.toString());
 
-        try {
-          const response = await fetch(apiUrl.toString());
-          const xmlText = await response.text();
-          const parsed = parser.parse(xmlText);
-          const items = parsed?.response?.body?.items?.item;
+      try {
+        const response = await fetch(apiUrl.toString());
+        const xmlText = await response.text();
+        const parsed = parser.parse(xmlText);
+        const items = parsed?.response?.body?.items?.item;
 
           // items가 없으면 해당 월의 페이지 루프 종료
           if (!items) {

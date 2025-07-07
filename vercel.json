@@ -1,4 +1,46 @@
 {
   "version": 2,
-  "name": "nonhyeon-info-site"
+  "name": "nonhyeon-info-site",
+  "headers": [
+    {
+      "source": "/api/news",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300"
+        }
+      ]
+    },
+    {
+      "source": "/api/stats",
+      "headers": [
+        {
+          "key": "Cache-Control", 
+          "value": "public, max-age=600, s-maxage=600"
+        }
+      ]
+    },
+    {
+      "source": "/api/sync",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=180, s-maxage=180"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options", 
+          "value": "nosniff"
+        }
+      ]
+    }
+  ]
 } 

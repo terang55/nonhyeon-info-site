@@ -128,6 +128,14 @@ export async function GET() {
         }
       },
       timestamp: new Date().toISOString()
+    }, {
+      headers: {
+        'Cache-Control': 'public, max-age=600, s-maxage=600', // 10분 캐시 (통계는 덜 자주 변경됨)
+        'CDN-Cache-Control': 'public, max-age=600',
+        'Vercel-CDN-Cache-Control': 'public, max-age=600',
+        'ETag': `"stats-${new Date().getTime()}"`,
+        'Last-Modified': new Date().toUTCString()
+      }
     });
 
   } catch (error) {
@@ -157,6 +165,12 @@ export async function GET() {
         }
       },
       timestamp: new Date().toISOString()
+    }, {
+      headers: {
+        'Cache-Control': 'public, max-age=60, s-maxage=60', // 에러 시 1분만 캐시
+        'CDN-Cache-Control': 'public, max-age=60',
+        'Vercel-CDN-Cache-Control': 'public, max-age=60'
+      }
     });
   }
 } 

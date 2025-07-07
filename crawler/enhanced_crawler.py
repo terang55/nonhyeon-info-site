@@ -84,13 +84,13 @@ class EnhancedNonhyeonCrawler:
         """개선된 네이버 뉴스 크롤링 - 네이버 뉴스 본 페이지에서 직접 수집"""
         try:
             logger.info(f"네이버 뉴스 본 페이지에서 직접 크롤링 시작: {keyword}")
-
+            
             news_data = []
-
+            
             # 네이버 뉴스 검색 결과 수집 함수 호출
             search_news = self._crawl_naver_news_search(keyword)
             news_data.extend(search_news)
-
+            
             # 중복 제거
             unique_news = []
             seen_urls = set()
@@ -98,13 +98,13 @@ class EnhancedNonhyeonCrawler:
                 if article['url'] not in seen_urls:
                     unique_news.append(article)
                     seen_urls.add(article['url'])
-
+            
             # 상위 5개만 유지
             news_data = unique_news[:5]
-
+            
             logger.info(f"네이버 뉴스 직접 수집 완료: {len(news_data)}개 기사")
             return news_data
-
+            
         except Exception as e:
             logger.error(f"네이버 뉴스 직접 크롤링 오류: {str(e)}")
             return []
@@ -113,7 +113,7 @@ class EnhancedNonhyeonCrawler:
         """네이버 뉴스 검색 크롤링 - 최신 페이지 구조 대응"""
         try:
             logger.debug(f"네이버 뉴스 검색으로 '{keyword}' 수집 중...")
-
+            
             # 네이버 뉴스 검색 (관련도순, 최근 1주일)
             encoded_keyword = urllib.parse.quote(keyword)
             search_url = (
@@ -122,16 +122,16 @@ class EnhancedNonhyeonCrawler:
                 "&docid=&related=0&mynews=0&office_type=0&office_section_code=0&"
                 "news_office_checked=&nso=so%3Ar%2Cp%3A1w&is_sug_officeid=0&office_category=0&service_area=0"
             )
-
+            
             logger.debug(f"검색 URL: {search_url}")
             self.driver.get(search_url)
             time.sleep(config.DELAY_BETWEEN_REQUESTS)
 
             html = self.driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
-
+            
             news_data = []
-
+            
             news_areas = soup.select('div.news_area')
             logger.debug(f"네이버 뉴스 컨테이너 발견: {len(news_areas)}개 (news_area)")
 
@@ -139,7 +139,7 @@ class EnhancedNonhyeonCrawler:
             if len(news_areas) == 0:
                 news_areas = soup.select('div.sds-comps-vertical-layout.sds-comps-full-layout.BHQHyn3Flk5rFBSacJkG')
                 logger.debug(f"Fallback BHQ 컨테이너 발견: {len(news_areas)}개 (BHQHyn3...)")
-
+            
             for idx, area in enumerate(news_areas[:10]):  # 최대 10개까지 가져와서 중복 제거 단계로 넘김
                 try:
                     # ----- 제목 & 링크 -----
@@ -158,18 +158,18 @@ class EnhancedNonhyeonCrawler:
                             parent_a = title_span.find_parent('a')
                             if parent_a and parent_a.has_attr('href'):
                                 link = parent_a['href']
-
+                    
                     if not title or not link:
                         continue
-
+                    
                     # 유효한 뉴스 URL인지 확인
                     if not self._is_valid_news_url_enhanced(link):
                         continue
-
+                    
                     # 광고성 콘텐츠 필터링
                     if self._is_ad_content(title):
                         continue
-
+                    
                     # 요약문 (구버전/신버전 모두 대응)
                     summary_elem = (
                         area.select_one('div.dsc_wrap') or
@@ -179,7 +179,7 @@ class EnhancedNonhyeonCrawler:
                     summary = summary_elem.get_text(strip=True) if summary_elem else ""
                     if len(summary) > 200:
                         summary = summary[:200] + "..."
-
+                    
                     # 날짜 처리
                     date_info = datetime.now().strftime("%Y-%m-%d")
                     date_elem = (
@@ -210,7 +210,7 @@ class EnhancedNonhyeonCrawler:
                     else:
                         from urllib.parse import urlparse
                         press = urlparse(link).netloc
-
+                    
                     news_data.append({
                         "title": title,
                         "url": link,
@@ -224,14 +224,14 @@ class EnhancedNonhyeonCrawler:
                         "section": "검색 결과",
                         "type": "news"
                     })
-
+                    
                 except Exception as e:
                     logger.debug(f"뉴스 아이템 {idx+1} 처리 오류: {str(e)}")
                     continue
-
+            
             logger.info(f"네이버 뉴스 검색으로 {len(news_data)}개 수집 완료")
             return news_data
-
+            
         except Exception as e:
             logger.warning(f"네이버 뉴스 검색 중 오류: {str(e)}")
             return []

@@ -102,8 +102,8 @@ const MedicalWidget: React.FC<MedicalWidgetProps> = ({ initialType = 'all' }) =>
       if (selectedType !== 'all') params.append('type', selectedType);
       if (selectedCategory) params.append('category', selectedCategory);
       if (selectedType !== 'pharmacy') {
-        if (emergencyOnly) params.append('emergency', 'true');
-        if (nightOnly) params.append('night', 'true');
+      if (emergencyOnly) params.append('emergency', 'true');
+      if (nightOnly) params.append('night', 'true');
       }
       params.append('radius', '2000'); // 2km 반경
       // 내 위치 정보 추가
@@ -218,27 +218,27 @@ const MedicalWidget: React.FC<MedicalWidgetProps> = ({ initialType = 'all' }) =>
       {!isDataLoaded && !loading ? (
         /* --- 초기 안내/로딩 전 --- */
         <>
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🏥</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🏥</div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
               {selectedType === 'pharmacy' ? '논현동 주변 약국 정보' : selectedType === 'hospital' ? '논현동 주변 병원 정보' : '논현동 주변 병원/약국 정보'}
-            </h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto text-sm sm:text-base leading-relaxed">
+          </h3>
+          <p className="text-gray-600 mb-6 max-w-md mx-auto text-sm sm:text-base leading-relaxed">
               논현동의 모든 의료기관 정보를 확인하세요.
               공공데이터(보건복지부) + 위치기반 거리정보로 최신 상태를 제공합니다.
-            </p>
-            <button
-              onClick={fetchMedicalData}
-              className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors font-medium flex items-center gap-2 mx-auto text-sm sm:text-base min-h-[44px]"
-            >
-              <span>🔍</span>
+          </p>
+          <button
+            onClick={fetchMedicalData}
+            className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors font-medium flex items-center gap-2 mx-auto text-sm sm:text-base min-h-[44px]"
+          >
+            <span>🔍</span>
               {selectedType === 'pharmacy' ? '약국 정보 보기' : selectedType === 'hospital' ? '병원 정보 보기' : '병원/약국 정보 보기'}
-            </button>
-            <div className="mt-4 text-xs sm:text-sm text-gray-500 space-y-1">
-              <div>💡 실시간 정보 • 전화연결 • 지도보기</div>
-              <div>진료과목 필터링 • 응급실/야간진료 검색</div>
-            </div>
+          </button>
+          <div className="mt-4 text-xs sm:text-sm text-gray-500 space-y-1">
+            <div>💡 실시간 정보 • 전화연결 • 지도보기</div>
+            <div>진료과목 필터링 • 응급실/야간진료 검색</div>
           </div>
+        </div>
         </>
       ) : (
         /* --- 실제 데이터/필터/리스트 --- */
@@ -294,39 +294,39 @@ const MedicalWidget: React.FC<MedicalWidgetProps> = ({ initialType = 'all' }) =>
             </div>
           )}
 
-          {/* 진료과목 선택 */}
-          {selectedType !== 'pharmacy' && (
-            <div className="overflow-x-auto">
-              <div className="flex gap-2 pb-2 min-w-max">
-                <button
-                  onClick={() => setSelectedCategory('')}
-                  className={`px-4 py-2 text-sm font-medium rounded-full border whitespace-nowrap min-h-[36px] ${
-                    selectedCategory === ''
-                      ? 'bg-green-500 text-white border-green-500'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 active:bg-gray-100'
-                  }`}
-                >
-                  전체과목
-                </button>
-                {categories.map((cat) => (
+            {/* 진료과목 선택 */}
+            {selectedType !== 'pharmacy' && (
+              <div className="overflow-x-auto">
+                <div className="flex gap-2 pb-2 min-w-max">
                   <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
+                    onClick={() => setSelectedCategory('')}
                     className={`px-4 py-2 text-sm font-medium rounded-full border whitespace-nowrap min-h-[36px] ${
-                      selectedCategory === cat
+                      selectedCategory === ''
                         ? 'bg-green-500 text-white border-green-500'
                         : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 active:bg-gray-100'
                     }`}
                   >
-                    {cat}
+                    전체과목
                   </button>
-                ))}
+                {categories.map((cat) => (
+                    <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                      className={`px-4 py-2 text-sm font-medium rounded-full border whitespace-nowrap min-h-[36px] ${
+                      selectedCategory === cat
+                          ? 'bg-green-500 text-white border-green-500'
+                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 active:bg-gray-100'
+                      }`}
+                    >
+                    {cat}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* 특수 옵션 */}
-          <div className="flex flex-wrap gap-4">
+            {/* 특수 옵션 */}
+            <div className="flex flex-wrap gap-4">
             {selectedType === 'pharmacy' ? (
               <>
                 <label className="flex items-center text-sm text-gray-700 cursor-pointer min-h-[36px]">
@@ -350,24 +350,24 @@ const MedicalWidget: React.FC<MedicalWidgetProps> = ({ initialType = 'all' }) =>
               </>
             ) : (
               <>
-                <label className="flex items-center text-sm text-gray-700 cursor-pointer min-h-[36px]">
-                  <input
-                    type="checkbox"
-                    checked={emergencyOnly}
-                    onChange={(e) => setEmergencyOnly(e.target.checked)}
-                    className="mr-3 w-4 h-4"
-                  />
-                  <span className="font-medium">🚨 응급실만</span>
-                </label>
-                <label className="flex items-center text-sm text-gray-700 cursor-pointer min-h-[36px]">
-                  <input
-                    type="checkbox"
-                    checked={nightOnly}
-                    onChange={(e) => setNightOnly(e.target.checked)}
-                    className="mr-3 w-4 h-4"
-                  />
-                  <span className="font-medium">🌙 야간진료만</span>
-                </label>
+              <label className="flex items-center text-sm text-gray-700 cursor-pointer min-h-[36px]">
+                <input
+                  type="checkbox"
+                  checked={emergencyOnly}
+                  onChange={(e) => setEmergencyOnly(e.target.checked)}
+                  className="mr-3 w-4 h-4"
+                />
+                <span className="font-medium">🚨 응급실만</span>
+              </label>
+              <label className="flex items-center text-sm text-gray-700 cursor-pointer min-h-[36px]">
+                <input
+                  type="checkbox"
+                  checked={nightOnly}
+                  onChange={(e) => setNightOnly(e.target.checked)}
+                  className="mr-3 w-4 h-4"
+                />
+                <span className="font-medium">🌙 야간진료만</span>
+              </label>
               </>
             )}
           </div>
@@ -532,16 +532,16 @@ const MedicalWidget: React.FC<MedicalWidgetProps> = ({ initialType = 'all' }) =>
                 </>
               )}
             </div>
+              )}
+            </div>
           )}
-        </div>
-      )}
 
-      <div className="mt-6 pt-4 border-t border-gray-200 text-center">
-        <div className="text-xs sm:text-sm text-gray-500 space-y-1">
+          <div className="mt-6 pt-4 border-t border-gray-200 text-center">
+            <div className="text-xs sm:text-sm text-gray-500 space-y-1">
           <div className="font-medium">📍 논현동의 의료기관 정보</div>
           <div className="text-gray-400">보건복지부 공공데이터 • 거리순 정렬</div>
-        </div>
-      </div>
+            </div>
+          </div>
     </div>
   );
 };

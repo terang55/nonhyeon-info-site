@@ -94,7 +94,13 @@ export default function HomePage() {
       }
       params.append('limit', '100');
 
-      const response = await fetch(`/api/news?${params.toString()}`);
+      const response = await fetch(`/api/news?${params.toString()}`, {
+        cache: 'no-store', // 항상 최신 데이터 가져오기
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       const result: ApiResponse = await response.json();
 
       if (result.success) {
@@ -155,7 +161,13 @@ export default function HomePage() {
 
   const fetchSyncStatus = async () => {
     try {
-      const response = await fetch('/api/sync');
+      const response = await fetch('/api/sync', {
+        cache: 'no-store', // 항상 최신 동기화 상태 확인
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       const result = await response.json();
       
       if (result.success) {
@@ -168,7 +180,13 @@ export default function HomePage() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/stats');
+      const response = await fetch('/api/stats', {
+        cache: 'no-store', // 항상 최신 통계 확인
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       const result = await response.json();
       
       if (result.success) {
@@ -309,7 +327,7 @@ export default function HomePage() {
           }
       }))
       }
-    };
+  };
 
     return structuredData;
   };
@@ -398,7 +416,7 @@ export default function HomePage() {
                 <svg width="20" height="20" fill="currentColor" className="mr-2" viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm8.5 13.5v-4.5l3.5 4.5h2V7.5h-2v4.5l-3.5-4.5h-2v9h2z"/></svg>
                 <span className="text-sm font-medium">네이버카페 논총연</span>
               </a>
-            </div>
+              </div>
             <div className="text-xs sm:text-sm text-gray-600 text-center">
               <span className="block sm:hidden">부동산 실거래가 · 지하철 실시간 정보</span>
               <span className="hidden sm:block">논현동 실거래가 · 호구포역 · 인천논현역 · 소래포구역 실시간 정보</span>

@@ -21,6 +21,14 @@ export async function GET() {
           status: 'synced'
         },
         timestamp: new Date().toISOString()
+      }, {
+        headers: {
+          'Cache-Control': 'public, max-age=180, s-maxage=180', // 3분 캐시 (동기화 상태는 자주 확인)
+          'CDN-Cache-Control': 'public, max-age=180',
+          'Vercel-CDN-Cache-Control': 'public, max-age=180',
+          'ETag': `"sync-${new Date().getTime()}"`,
+          'Last-Modified': new Date().toUTCString()
+        }
       });
       
     } catch {
@@ -35,6 +43,12 @@ export async function GET() {
           status: 'never_synced'
         },
         timestamp: new Date().toISOString()
+      }, {
+        headers: {
+          'Cache-Control': 'public, max-age=60, s-maxage=60', // 동기화 안됨 상태는 1분만 캐시
+          'CDN-Cache-Control': 'public, max-age=60',
+          'Vercel-CDN-Cache-Control': 'public, max-age=60'
+        }
       });
     }
     
@@ -45,6 +59,13 @@ export async function GET() {
       success: false,
       error: 'Failed to check sync status',
       timestamp: new Date().toISOString()
-    }, { status: 500 });
+    }, { 
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate', // 에러는 캐시하지 않음
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
   }
 } 

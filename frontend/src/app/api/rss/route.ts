@@ -19,7 +19,7 @@ interface NewsItem {
 export async function GET() {
   try {
     console.log('📡 RSS 피드 생성 시작');
-    
+
     // 최신 뉴스 데이터 파일 찾기
     const dataPath = path.join(process.cwd(), 'public', 'data', 'enhanced_news');
     let newsData: NewsItem[] = [];
@@ -41,7 +41,7 @@ export async function GET() {
         console.log(`📰 RSS 피드용 뉴스 ${newsData.length}개 로드`);
       }
     }
-    
+
     // RSS XML 생성
     const rssItems = newsData.map(item => {
       const pubDate = new Date(item.date).toUTCString();
@@ -107,12 +107,12 @@ export async function GET() {
       <height>192</height>
     </image>
     <atom:link href="${BASE_URL}/api/rss" rel="self" type="application/rss+xml" />
-    ${rssItems}
+${rssItems}
   </channel>
 </rss>`;
 
     console.log('✅ RSS 피드 생성 완료');
-    
+
     return new NextResponse(rssXml, {
       status: 200,
       headers: {
@@ -122,7 +122,7 @@ export async function GET() {
         'Vercel-CDN-Cache-Control': 'public, max-age=3600',
       },
     });
-    
+
   } catch (error) {
     console.error('❌ RSS 피드 생성 오류:', error);
     

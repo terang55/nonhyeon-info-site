@@ -172,6 +172,14 @@ export async function GET(request: NextRequest) {
       data: filteredNews,
       total: filteredNews.length,
       timestamp: new Date().toISOString()
+    }, {
+      headers: {
+        'Cache-Control': 'public, max-age=300, s-maxage=300', // 5분 캐시
+        'CDN-Cache-Control': 'public, max-age=300',
+        'Vercel-CDN-Cache-Control': 'public, max-age=300',
+        'ETag': `"news-${new Date().getTime()}"`, // 변경 감지용
+        'Last-Modified': new Date().toUTCString()
+      }
     });
 
   } catch (error) {
@@ -214,6 +222,12 @@ export async function GET(request: NextRequest) {
       total: mockData.length,
       timestamp: new Date().toISOString(),
       note: "Using mock data due to file system error"
+    }, {
+      headers: {
+        'Cache-Control': 'public, max-age=60, s-maxage=60', // 에러 시 1분만 캐시
+        'CDN-Cache-Control': 'public, max-age=60',
+        'Vercel-CDN-Cache-Control': 'public, max-age=60'
+      }
     });
   }
 } 
