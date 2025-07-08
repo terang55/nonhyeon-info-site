@@ -11,7 +11,10 @@ RSS: https://nonhyeon.life/api/rss
 Disallow: /api/
 Disallow: /_next/
 Disallow: /admin/
-Disallow: /*.json$
+
+# 데이터 파일은 차단하되, PWA 관련 파일은 허용
+Disallow: /data/
+Disallow: /public/data/
 
 # RSS, ads.txt, PWA 관련 파일 허용
 Allow: /api/rss
@@ -21,6 +24,10 @@ Allow: /site.webmanifest
 Allow: /favicon.ico
 Allow: /android-chrome-*.png
 Allow: /apple-touch-icon.png
+
+# SEO 관련 파일 명시적 허용
+Allow: /sitemap.xml
+Allow: /robots.txt
 
 # 크롤링 속도 제한 (1초 간격)
 Crawl-delay: 1

@@ -68,6 +68,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily' as const,
       priority: 0.8,
     },
+    // 학원 정보 페이지
+    {
+      url: `${baseUrl}/academy`,
+      lastModified: now,
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    },
     // 오프라인 페이지
     {
       url: `${baseUrl}/offline`,

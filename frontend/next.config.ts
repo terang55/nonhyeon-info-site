@@ -162,16 +162,8 @@ const nextConfig: NextConfig = {
   
   async redirects() {
     return [
-      {
-        source: '/home',
-        destination: '/',
-        permanent: true,
-      },
-      {
-        source: '/index',
-        destination: '/',
-        permanent: true,
-      },
+      // SEO 최적화를 위해 불필요한 리디렉션 제거
+      // Google이 리디렉션 체인을 선호하지 않으므로 필요한 경우에만 사용
     ];
   },
 };
