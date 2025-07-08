@@ -44,15 +44,10 @@ interface RealEstateResponse {
   data: RealEstateData;
   newTransactions?: Deal[];
   newCount?: number;
+  baselineDate?: string | null;
   location: string;
   timestamp: string;
-  comparisonTime?: string;
 }
-
-// localStorage 키 상수
-const STORAGE_KEY = 'nonhyeon_realestate_data';
-const STORAGE_TIMESTAMP_KEY = 'nonhyeon_realestate_timestamp';
-const STORAGE_EXPIRY_HOURS = 24;
 
 // 고유 ID 생성 함수 (기존 데이터 구조에 맞게 조정)
 function generateUniqueId(deal: Deal): string {
@@ -69,83 +64,15 @@ export default function RealEstateWidget() {
   const [highlight, setHighlight] = useState<string | null>(null);
   const [showNewOnly, setShowNewOnly] = useState(false);
   const [newTransactions, setNewTransactions] = useState<Deal[]>([]);
-  const [lastUpdateTime, setLastUpdateTime] = useState<string | null>(null);
-  const [hasStoredData, setHasStoredData] = useState(false);
-  const [isComparing, setIsComparing] = useState(false);
+  const [baselineDate, setBaselineDate] = useState<string | null>(null);
+  const [isUpdatingBaseline, setIsUpdatingBaseline] = useState(false);
   const [celebrationMessage, setCelebrationMessage] = useState<string | null>(null);
   
   const apartmentRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // localStorage에서 데이터 읽기
-  const getStoredData = useCallback((): { data: Deal[] | null; timestamp: string | null } => {
-    try {
-      const storedData = localStorage.getItem(STORAGE_KEY);
-      const storedTimestamp = localStorage.getItem(STORAGE_TIMESTAMP_KEY);
-      
-      if (!storedData || !storedTimestamp) {
-        return { data: null, timestamp: null };
-      }
-      
-      // 24시간 만료 체크
-      const timestamp = new Date(storedTimestamp);
-      const now = new Date();
-      const hoursDiff = (now.getTime() - timestamp.getTime()) / (1000 * 60 * 60);
-      
-      if (hoursDiff > STORAGE_EXPIRY_HOURS) {
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(STORAGE_TIMESTAMP_KEY);
-        return { data: null, timestamp: null };
-      }
-      
-      return {
-        data: JSON.parse(storedData),
-        timestamp: storedTimestamp
-      };
-    } catch (error) {
-      console.error('localStorage 읽기 오류:', error);
-      return { data: null, timestamp: null };
-    }
-  }, []);
-
-  // localStorage에 데이터 저장
-  const saveDataToStorage = useCallback((deals: Deal[]) => {
-    try {
-      const timestamp = new Date().toISOString();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(deals));
-      localStorage.setItem(STORAGE_TIMESTAMP_KEY, timestamp);
-      setLastUpdateTime(timestamp);
-    } catch (error) {
-      console.error('localStorage 저장 오류:', error);
-    }
-  }, []);
-
-  // 시간 경과 표시
-  const getTimeAgo = (timestamp: string) => {
-    const now = new Date();
-    const time = new Date(timestamp);
-    const diffHours = (now.getTime() - time.getTime()) / (1000 * 60 * 60);
-    
-    if (diffHours < 1) {
-      return '방금 전';
-    } else if (diffHours < 24) {
-      return `${Math.floor(diffHours)}시간 전`;
-    } else {
-      const diffDays = Math.floor(diffHours / 24);
-      return `${diffDays}일 전`;
-    }
-  };
-
   useEffect(() => {
-    const { data: storedData, timestamp } = getStoredData();
-    
-    if (storedData && timestamp) {
-      setHasStoredData(true);
-      setLastUpdateTime(timestamp);
-      console.log('📦 저장된 부동산 데이터 확인:', storedData.length, '건');
-    }
-    
     fetchRealEstateData();
-  }, [getStoredData]);
+  }, []);
 
   const fetchRealEstateData = useCallback(async () => {
     try {
@@ -191,10 +118,11 @@ export default function RealEstateWidget() {
           apartment_stats: apartmentStatsData
         });
         
-        // 데이터를 localStorage에 저장
-        saveDataToStorage(dealsWithIds);
+        // 신규 거래 정보 설정
+        setNewTransactions(result.newTransactions || []);
+        setBaselineDate(result.baselineDate || null);
         
-        console.log('✅ 부동산 데이터 로드 및 저장 완료:', dealsWithIds.length, '건');
+        console.log('✅ 부동산 데이터 로드 완료:', dealsWithIds.length, '건');
       } else {
         setError('실거래가 정보를 불러올 수 없습니다.');
       }
@@ -204,82 +132,57 @@ export default function RealEstateWidget() {
     } finally {
       setLoading(false);
     }
-  }, [saveDataToStorage]);
+  }, []);
 
-  // 신규 거래 비교
-  const compareWithPreviousData = useCallback(async () => {
+  // 기준 데이터 업데이트 함수
+  const updateBaselineData = useCallback(async () => {
     try {
-      setIsComparing(true);
+      setIsUpdatingBaseline(true);
       setError(null);
 
-      const { data: previousData } = getStoredData();
+      console.log('🔄 기준 데이터 업데이트 시작');
       
-      if (!previousData || previousData.length === 0) {
-        setError('비교할 이전 데이터가 없습니다. 먼저 "🔄 새로고침"을 클릭해주세요.');
-        return;
-      }
-
-      // 이전 데이터의 고유 ID Set 생성
-      const previousIds = new Set(previousData.map(generateUniqueId));
-      
-      // 현재 데이터에서 신규 거래 찾기
-      const currentDeals = data?.deals || [];
-      const newDeals = currentDeals.filter(deal => {
-        const currentId = generateUniqueId(deal);
-        return !previousIds.has(currentId);
-      }).map(deal => ({
-        ...deal,
-        isNew: true
-      }));
-
-      // 전체 데이터에 신규 표시 추가
-      const dealsWithNewFlag = currentDeals.map(deal => ({
-        ...deal,
-        isNew: newDeals.some(newDeal => generateUniqueId(newDeal) === generateUniqueId(deal))
-      }));
-
-      // 아파트별 신규 거래 수 계산
-      const apartmentStats = (data?.apartment_stats || []).map(stat => {
-        const newCount = newDeals.filter(deal => deal.apartment_name === stat.name).length;
-        return {
-          ...stat,
-          newCount
-        };
+      // POST API로 기준 데이터 업데이트 요청
+      const response = await fetch('/api/realestate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        },
+        body: JSON.stringify({
+          action: 'update_baseline'
+        })
       });
-      
-      setData(prev => prev ? {
-        ...prev,
-        deals: dealsWithNewFlag,
-        apartment_stats: apartmentStats
-      } : null);
-      
-      setNewTransactions(newDeals);
-      
-      const newCount = newDeals.length;
-      
-      if (newCount > 0) {
-        setShowNewOnly(true);
-        setCelebrationMessage(`🎉 새로운 거래 ${newCount}건을 발견했습니다!`);
-        
-        // 새 데이터를 localStorage에 저장
-        saveDataToStorage(dealsWithNewFlag);
-        
-        // 축하 메시지 3초 후 제거
-        setTimeout(() => setCelebrationMessage(null), 3000);
-      } else {
-        setCelebrationMessage('💡 신규 거래가 없습니다. 모든 데이터가 최신 상태입니다.');
-        setTimeout(() => setCelebrationMessage(null), 3000);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
-      console.log('✅ 신규 거래 비교 완료:', newCount, '건 발견');
+
+      const result = await response.json();
+      console.log('🔍 기준 데이터 업데이트 결과:', result);
+
+      if (result.success) {
+        setCelebrationMessage(`✅ 기준 데이터가 업데이트되었습니다! (${result.baselineCount}건)`);
+        
+        // 데이터 새로고침
+        await fetchRealEstateData();
+        
+        // 메시지 3초 후 제거
+        setTimeout(() => setCelebrationMessage(null), 3000);
+        
+        console.log('✅ 기준 데이터 업데이트 완료:', result.baselineCount, '건');
+      } else {
+        setError('기준 데이터 업데이트에 실패했습니다.');
+      }
       
     } catch (error) {
-      console.error('신규 거래 비교 오류:', error);
-      setError('신규 거래 비교 중 오류가 발생했습니다.');
+      console.error('기준 데이터 업데이트 오류:', error);
+      setError('기준 데이터 업데이트 중 오류가 발생했습니다.');
     } finally {
-      setIsComparing(false);
+      setIsUpdatingBaseline(false);
     }
-  }, [data, getStoredData, saveDataToStorage]);
+  }, []);
 
   // 검색어가 단지명과 정확히 일치하면 해당 카드로 스크롤 & 강조
   useEffect(() => {
@@ -360,7 +263,7 @@ export default function RealEstateWidget() {
         </h2>
         <div className="text-xs text-gray-500">
           {data?.statistics?.period || '데이터 로딩중'}
-          {lastUpdateTime && ` • ${getTimeAgo(lastUpdateTime)}`}
+          {baselineDate && ` • 기준: ${baselineDate}`}
         </div>
       </div>
 
@@ -380,16 +283,16 @@ export default function RealEstateWidget() {
         </button>
 
         <button
-          onClick={compareWithPreviousData}
-          disabled={isComparing || !hasStoredData}
+          onClick={updateBaselineData}
+          disabled={isUpdatingBaseline}
           className="flex items-center justify-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
         >
-          {isComparing ? (
+          {isUpdatingBaseline ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Sparkles className="h-4 w-4" />
           )}
-          <span>신규 거래 확인</span>
+          <span>📌 기준점 설정</span>
         </button>
 
         {newTransactions.length > 0 && (
@@ -418,15 +321,24 @@ export default function RealEstateWidget() {
         )}
       </div>
 
+      {/* 축하 메시지 */}
+      {celebrationMessage && (
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg animate-pulse">
+          <div className="text-sm text-green-800 font-medium text-center">
+            {celebrationMessage}
+          </div>
+        </div>
+      )}
+
       {/* 안내 메시지 */}
-      {!hasStoredData && (
+      {!baselineDate && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-start space-x-2">
             <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-blue-800">
               <p className="font-medium">🎯 신규 거래 확인 방법:</p>
-              <p>1. 먼저 &quot;🔄 새로고침&quot;을 클릭하여 현재 데이터를 저장하세요</p>
-              <p>2. 다음날 &quot;🆕 신규 거래 확인&quot;을 클릭하면 새로운 거래를 자동으로 탐지합니다</p>
+              <p>1. 먼저 &quot;📌 기준점 설정&quot;을 클릭하여 현재 데이터를 기준으로 설정하세요</p>
+              <p>2. 다음날 새로고침하면 기준점 이후의 신규 거래가 자동으로 표시됩니다</p>
             </div>
           </div>
         </div>
@@ -452,18 +364,18 @@ export default function RealEstateWidget() {
       </div>
       
       {/* 전체 통계 요약 */}
-      <div className="grid grid-cols-3 gap-2 mb-2 p-2 bg-gray-50 rounded-lg">
-        <div className="text-center">
-          <p className="text-xs text-gray-600">평균가</p>
-          <p className="text-xs sm:text-sm font-semibold text-blue-600 sm:whitespace-nowrap">{data?.statistics?.avg_price || '계산중'}</p>
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="bg-white border border-blue-200 rounded-lg p-3 text-center shadow-sm">
+          <p className="text-xs text-blue-600 font-medium mb-1">평균가</p>
+          <p className="text-sm font-bold text-blue-700 sm:whitespace-nowrap">{data?.statistics?.avg_price || '계산중'}</p>
         </div>
-        <div className="text-center">
-          <p className="text-xs text-gray-600">최고가</p>
-          <p className="text-xs sm:text-sm font-semibold text-red-600 sm:whitespace-nowrap">{data?.statistics?.max_price || '계산중'}</p>
+        <div className="bg-white border border-red-200 rounded-lg p-3 text-center shadow-sm">
+          <p className="text-xs text-red-600 font-medium mb-1">최고가</p>
+          <p className="text-sm font-bold text-red-700 sm:whitespace-nowrap">{data?.statistics?.max_price || '계산중'}</p>
         </div>
-        <div className="text-center">
-          <p className="text-xs text-gray-600">최저가</p>
-          <p className="text-xs sm:text-sm font-semibold text-green-600 sm:whitespace-nowrap">{data?.statistics?.min_price || '계산중'}</p>
+        <div className="bg-white border border-green-200 rounded-lg p-3 text-center shadow-sm">
+          <p className="text-xs text-green-600 font-medium mb-1">최저가</p>
+          <p className="text-sm font-bold text-green-700 sm:whitespace-nowrap">{data?.statistics?.min_price || '계산중'}</p>
         </div>
       </div>
       
@@ -534,8 +446,8 @@ export default function RealEstateWidget() {
                   highlight === stat.name
                     ? 'border-yellow-400 bg-yellow-50 shadow-md scale-105'
                     : expandedApartment === stat.name
-                    ? 'border-green-400 bg-green-50'
-                    : 'border-gray-200 bg-white hover:bg-gray-50'
+                    ? 'border-green-400 bg-green-50 shadow-sm'
+                    : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm'
                 }`}
                 onClick={() => setExpandedApartment(expandedApartment === stat.name ? null : stat.name)}
               >
@@ -565,17 +477,31 @@ export default function RealEstateWidget() {
                       {allDeals
                         .filter(deal => deal.apartment_name === stat.name)
                         .map((deal, idx) => (
-                          <div key={deal.uniqueId || idx} className={`text-xs p-2 rounded transition-all ${deal.isNew ? 'bg-green-100 border border-green-300' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                          <div key={deal.uniqueId || idx} className={`text-xs p-3 rounded-lg border transition-all ${
+                            deal.isNew 
+                              ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 shadow-sm' 
+                              : 'bg-white border-gray-200 hover:border-blue-300 hover:shadow-sm'
+                          }`}>
                             <div className="flex justify-between items-center">
-                              <span className="font-medium">{deal.area} • {deal.floor}</span>
-                              <span className="text-blue-600 font-semibold">{deal.price}</span>
+                              <div className="flex items-center space-x-2">
+                                <span className="font-medium text-gray-800">{deal.area} • {deal.floor}</span>
+                                {deal.isNew && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    NEW
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-blue-600 font-bold text-sm">{deal.price}</span>
                             </div>
-                            <div className="flex justify-between items-center mt-1">
-                              <span className="text-gray-500">{deal.build_year}년</span>
-                              <span className="text-gray-500">{deal.deal_date}</span>
+                            <div className="flex justify-between items-center mt-2">
+                              <span className="text-gray-600">{deal.build_year}년 건축</span>
+                              <span className="text-gray-600 font-medium">{deal.deal_date}</span>
                             </div>
-                            <div className="mt-1 text-gray-400">
-                              <span>평당 {deal.price_per_pyeong}</span>
+                            <div className="mt-2 pt-2 border-t border-gray-100">
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-xs">평당 가격</span>
+                                <span className="text-gray-700 font-semibold">{deal.price_per_pyeong}</span>
+                              </div>
                             </div>
                           </div>
                         ))}

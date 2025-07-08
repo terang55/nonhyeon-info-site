@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
+import fs from 'fs';
+import path from 'path';
 
 // 국토교통부 실거래가 API 설정
 const MOLIT_API_KEY = 'aTgFhrZehAYOxHq4Z3z1iSYeysHfG9Tu43JQhF26U3mdGzr0H8+jR9MzrwPoqr8yOegDO5OO56GmvXzS7rwkdw==';
 const MOLIT_BASE_URL = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade'; 
 
 const AREA_CODE = '28200'; // 인천 남동구
+
+// 서버 기반 기준 데이터 파일 경로
+const BASELINE_DATA_PATH = path.join(process.cwd(), 'data', 'realestate_baseline.json');
 
 interface ProcessedDeal {
   apartment_name: string;
@@ -32,6 +37,58 @@ interface ApartmentStat {
 // 고유 ID 생성 함수
 function generateUniqueId(deal: ProcessedDeal): string {
   return `${deal.apartment_name}-${deal.area}-${deal.floor}-${deal.deal_date}-${deal.price_numeric}`;
+}
+
+// 서버 기반 기준 데이터 관리 함수들
+interface BaselineData {
+  deals: ProcessedDeal[];
+  timestamp: string;
+  lastUpdateDate: string;
+}
+
+// 기준 데이터 읽기
+function readBaselineData(): BaselineData | null {
+  try {
+    if (!fs.existsSync(BASELINE_DATA_PATH)) {
+      return null;
+    }
+    const data = fs.readFileSync(BASELINE_DATA_PATH, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('❌ 기준 데이터 읽기 오류:', error);
+    return null;
+  }
+}
+
+// 기준 데이터 저장
+function saveBaselineData(deals: ProcessedDeal[]): void {
+  try {
+    // data 디렉토리 생성 (존재하지 않는 경우)
+    const dataDir = path.dirname(BASELINE_DATA_PATH);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    const baselineData: BaselineData = {
+      deals,
+      timestamp: new Date().toISOString(),
+      lastUpdateDate: new Date().toISOString().split('T')[0] // YYYY-MM-DD 형식
+    };
+    
+    fs.writeFileSync(BASELINE_DATA_PATH, JSON.stringify(baselineData, null, 2));
+    console.log('✅ 기준 데이터 저장 완료:', deals.length, '건');
+  } catch (error) {
+    console.error('❌ 기준 데이터 저장 오류:', error);
+  }
+}
+
+// 기준 데이터 업데이트 필요 여부 확인 (1일 1회)
+function shouldUpdateBaseline(): boolean {
+  const baseline = readBaselineData();
+  if (!baseline) return true;
+  
+  const today = new Date().toISOString().split('T')[0];
+  return baseline.lastUpdateDate !== today;
 }
 
 // 신규 거래 비교 함수
@@ -85,6 +142,11 @@ function calculatePricePerPyeong(price: number, area: unknown): string {
 export async function GET(): Promise<NextResponse> {
   try {
     console.log('🏠 인천 남동구 논현동 아파트 실거래가 최근 3개월 조회 시작');
+    
+    // 기준 데이터 읽기 (신규 거래 표시용)
+    const baselineData = readBaselineData();
+    console.log('📊 기준 데이터:', baselineData ? `${baselineData.deals.length}건 (${baselineData.lastUpdateDate})` : '없음');
+    
     const deals: ProcessedDeal[] = [];
     const parser = new XMLParser({ ignoreAttributes: false, trimValues: true });
     const now = new Date();
@@ -205,35 +267,64 @@ export async function GET(): Promise<NextResponse> {
       arr.findIndex(d => d.apartment_name === deal.apartment_name && d.area === deal.area && d.floor === deal.floor && d.deal_date === deal.deal_date) === idx
     );
     
-    // 통계 계산
-    const totalDeals = uniqueDeals.length;
-    const avgPrice = totalDeals > 0 ? Math.round(uniqueDeals.reduce((sum, deal) => sum + deal.price_numeric, 0) / totalDeals) : 0;
-    const maxPrice = totalDeals > 0 ? Math.max(...uniqueDeals.map(deal => deal.price_numeric)) : 0;
-    const minPrice = totalDeals > 0 ? Math.min(...uniqueDeals.map(deal => deal.price_numeric)) : 0;
+    // 신규 거래 표시 (기준 데이터와 비교)
+    let dealsWithNewFlag = uniqueDeals;
+    if (baselineData) {
+      const newTransactions = findNewTransactions(uniqueDeals, baselineData.deals);
+      const newTransactionIds = new Set(newTransactions.map(generateUniqueId));
+      
+      dealsWithNewFlag = uniqueDeals.map(deal => ({
+        ...deal,
+        uniqueId: generateUniqueId(deal),
+        isNew: newTransactionIds.has(generateUniqueId(deal))
+      }));
+      
+      console.log('🆕 신규 거래:', newTransactions.length, '건 발견');
+    } else {
+      // 기준 데이터가 없으면 모든 거래에 고유 ID만 추가
+      dealsWithNewFlag = uniqueDeals.map(deal => ({
+        ...deal,
+        uniqueId: generateUniqueId(deal),
+        isNew: false
+      }));
+    }
+    
+    // 통계 계산 (신규 표시가 포함된 데이터 기준)
+    const totalDeals = dealsWithNewFlag.length;
+    const avgPrice = totalDeals > 0 ? Math.round(dealsWithNewFlag.reduce((sum, deal) => sum + deal.price_numeric, 0) / totalDeals) : 0;
+    const maxPrice = totalDeals > 0 ? Math.max(...dealsWithNewFlag.map(deal => deal.price_numeric)) : 0;
+    const minPrice = totalDeals > 0 ? Math.min(...dealsWithNewFlag.map(deal => deal.price_numeric)) : 0;
 
-    // 아파트별 통계 계산
+    // 아파트별 통계 계산 (신규 거래 수 포함)
     interface ApartmentStatMapEntry {
       name: string;
       count: number;
       totalPrice: number;
       deals: ProcessedDeal[];
+      newCount: number;
     }
 
     const apartmentStatsMap: Record<string, ApartmentStatMapEntry> = {};
 
-    for (const deal of uniqueDeals) {
+    for (const deal of dealsWithNewFlag) {
       const key = deal.apartment_name;
       if (!apartmentStatsMap[key]) {
         apartmentStatsMap[key] = {
           name: key,
           count: 0,
           totalPrice: 0,
-          deals: []
+          deals: [],
+          newCount: 0
         };
       }
       apartmentStatsMap[key].count += 1;
       apartmentStatsMap[key].totalPrice += deal.price_numeric;
       apartmentStatsMap[key].deals.push(deal);
+      
+      // 신규 거래 수 계산
+      if (deal.isNew) {
+        apartmentStatsMap[key].newCount += 1;
+      }
     }
 
     const apartmentStatsArray: ApartmentStat[] = Object.values(apartmentStatsMap).map((entry) => {
@@ -243,15 +334,19 @@ export async function GET(): Promise<NextResponse> {
         count: entry.count,
         avg_price: formatPrice(avgNumeric),
         avg_price_numeric: avgNumeric,
+        newCount: entry.newCount
       };
     }).sort((a, b) => b.avg_price_numeric - a.avg_price_numeric);
     
     console.log(`✅ 논현동 실거래가 최근 3개월 수집 완료: ${totalDeals}건`);
     
+    // 신규 거래 정보 추가
+    const newTransactions = dealsWithNewFlag.filter(deal => deal.isNew);
+    
     return NextResponse.json({
       success: true,
       data: {
-        deals: uniqueDeals, // 모든 거래 반환 (중복 제거된)
+        deals: dealsWithNewFlag, // 신규 표시가 포함된 모든 거래 반환
         statistics: {
           total_deals: totalDeals,
           avg_price: formatPrice(avgPrice),
@@ -261,6 +356,9 @@ export async function GET(): Promise<NextResponse> {
         },
         apartment_stats: apartmentStatsArray
       },
+      newTransactions,
+      newCount: newTransactions.length,
+      baselineDate: baselineData?.lastUpdateDate || null,
       location: '인천 남동구 논현동',
       timestamp: new Date().toISOString()
     }, {
@@ -280,70 +378,59 @@ export async function GET(): Promise<NextResponse> {
   }
 } 
 
-// 신규 거래 비교를 위한 POST 메서드
+// 기준 데이터 업데이트를 위한 POST 메서드
 export async function POST(request: NextRequest) {
   try {
-    console.log('🆕 신규 거래 비교 시작');
+    console.log('🔄 기준 데이터 업데이트 시작');
     
     const body = await request.json();
-    const { previousData = [] } = body;
+    const { action } = body;
     
-    // 현재 최신 데이터 가져오기 (GET과 동일한 로직)
-    const currentResponse = await GET();
-    const currentResult = await currentResponse.json();
-    
-    if (!currentResult.success) {
-      throw new Error('현재 데이터를 가져오는데 실패했습니다.');
+    if (action === 'update_baseline') {
+      // 현재 최신 데이터 가져오기
+      const currentResponse = await GET();
+      const currentResult = await currentResponse.json();
+      
+      if (!currentResult.success) {
+        throw new Error('현재 데이터를 가져오는데 실패했습니다.');
+      }
+      
+      // 기준 데이터로 저장 (isNew 플래그 제거)
+      const cleanDeals = currentResult.data.deals.map((deal: ProcessedDeal) => ({
+        apartment_name: deal.apartment_name,
+        area: deal.area,
+        floor: deal.floor,
+        price: deal.price,
+        price_numeric: deal.price_numeric,
+        deal_date: deal.deal_date,
+        build_year: deal.build_year,
+        location: deal.location,
+        price_per_pyeong: deal.price_per_pyeong
+      }));
+      
+      saveBaselineData(cleanDeals);
+      
+      return NextResponse.json({
+        success: true,
+        message: '기준 데이터가 업데이트되었습니다.',
+        baselineCount: cleanDeals.length,
+        timestamp: new Date().toISOString()
+      }, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      });
     }
     
-    const currentData: ProcessedDeal[] = currentResult.data.deals;
-    
-    // 신규 거래 찾기
-    const newTransactions = findNewTransactions(currentData, previousData);
-    
-    console.log(`🔍 신규 거래 ${newTransactions.length}건 발견`);
-    
-    // 전체 데이터에 신규 표시 추가
-    const dataWithNewFlag = currentData.map(deal => ({
-      ...deal,
-      uniqueId: generateUniqueId(deal),
-      isNew: newTransactions.some(newDeal => generateUniqueId(newDeal) === generateUniqueId(deal))
-    }));
-    
-    // 아파트별 통계에 신규 거래 수 추가
-    const apartmentStats = currentResult.data.apartment_stats.map((stat: ApartmentStat) => {
-      const newCount = newTransactions.filter(deal => deal.apartment_name === stat.name).length;
-      return {
-        ...stat,
-        newCount
-      };
-    });
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        deals: dataWithNewFlag,
-        statistics: currentResult.data.statistics,
-        apartment_stats: apartmentStats
-      },
-      newTransactions,
-      newCount: newTransactions.length,
-      location: currentResult.location,
-      timestamp: new Date().toISOString(),
-      comparisonTime: new Date().toISOString()
-    }, {
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate', // 비교 결과는 캐시하지 않음
-        'Pragma': 'no-cache'
-      }
-    });
+    // 기본적으로는 현재 데이터 반환 (GET과 동일)
+    return await GET();
     
   } catch (error) {
-    console.error('❌ 신규 거래 비교 오류:', error);
+    console.error('❌ POST 요청 처리 오류:', error);
     
     return NextResponse.json({
       success: false,
-      error: '신규 거래 비교에 실패했습니다.',
+      error: 'POST 요청 처리에 실패했습니다.',
       timestamp: new Date().toISOString()
     }, { 
       status: 500,
