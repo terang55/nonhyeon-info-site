@@ -4,7 +4,6 @@ import Script from "next/script";
 import "./globals.css";
 import { BASE_URL } from '@/lib/siteConfig';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
-import PWAUpdateNotification from './components/PWAUpdateNotification';
 import NetworkStatus from './components/NetworkStatus';
 import BottomNavigation from './components/BottomNavigation';
 
@@ -540,7 +539,6 @@ export default function RootLayout({
         {children}
         <BottomNavigation />
         <PWAInstallPrompt />
-        <PWAUpdateNotification />
       </body>
     </html>
   );

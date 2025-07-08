@@ -1,6 +1,6 @@
-const CACHE_NAME = 'nonhyeon-life-v1.0.0';
-const STATIC_CACHE = 'static-v1';
-const DYNAMIC_CACHE = 'dynamic-v1';
+const CACHE_NAME = 'nonhyeon-life-v1.1.0';
+const STATIC_CACHE = 'static-v2';
+const DYNAMIC_CACHE = 'dynamic-v2';
 
 // 캐시할 정적 파일들
 const STATIC_FILES = [
@@ -121,7 +121,39 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 정적 파일 처리 (Cache First)
+  // HTML 파일 처리 (Network First - 항상 최신 버전 확인)
+  if (request.method === 'GET' && request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            // 성공적인 응답은 캐시에 저장
+            const responseClone = response.clone();
+            caches.open(DYNAMIC_CACHE)
+              .then((cache) => {
+                cache.put(request, responseClone);
+              });
+            return response;
+          }
+          throw new Error('Network response was not ok');
+        })
+        .catch(() => {
+          // 네트워크 실패 시 캐시된 버전 사용
+          return caches.match(request)
+            .then((cachedResponse) => {
+              if (cachedResponse) {
+                console.log('🔄 오프라인: 캐시된 HTML 사용');
+                return cachedResponse;
+              }
+              // 캐시도 없으면 메인 페이지
+              return caches.match('/');
+            });
+        })
+    );
+    return;
+  }
+
+  // 기타 정적 파일 처리 (Cache First - CSS, JS, 이미지 등)
   if (request.method === 'GET') {
     event.respondWith(
       caches.match(request)
@@ -143,10 +175,8 @@ self.addEventListener('fetch', (event) => {
               return response;
             })
             .catch(() => {
-              // 오프라인 시 기본 페이지
-              if (request.headers.get('accept').includes('text/html')) {
-                return caches.match('/');
-              }
+              // 정적 파일이 캐시에도 없고 네트워크도 안 되면 null
+              return null;
             });
         })
     );

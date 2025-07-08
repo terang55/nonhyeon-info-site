@@ -13,13 +13,11 @@ interface PWAStatus {
   isInstalled: boolean;
   isOnline: boolean;
   canInstall: boolean;
-  hasUpdate: boolean;
   isLoading: boolean;
 }
 
 interface PWAActions {
   install: () => Promise<boolean>;
-  update: () => Promise<void>;
   enableNotifications: () => Promise<boolean>;
   syncData: () => Promise<void>;
 }
@@ -28,7 +26,7 @@ export function usePWA(): PWAStatus & PWAActions {
   const [isInstalled, setIsInstalled] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [canInstall, setCanInstall] = useState(false);
-  const [hasUpdate, setHasUpdate] = useState(false);
+
   const [isLoading, setIsLoading] = useState(true);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
@@ -43,25 +41,7 @@ export function usePWA(): PWAStatus & PWAActions {
           
           console.log('✅ Service Worker 등록 성공:', reg);
 
-          // 업데이트 확인
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            if (newWorker) {
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  setHasUpdate(true);
-                  console.log('🔄 새 버전이 사용 가능합니다');
-                }
-              });
-            }
-          });
-
-          // 활성화된 Service Worker 메시지 수신
-          navigator.serviceWorker.addEventListener('message', (event) => {
-            if (event.data?.type === 'SW_UPDATED') {
-              setHasUpdate(true);
-            }
-          });
+          // 업데이트는 새로 접속할 때 자동으로 처리됨
 
         } catch (error) {
           console.error('❌ Service Worker 등록 실패:', error);
@@ -141,30 +121,7 @@ export function usePWA(): PWAStatus & PWAActions {
     }
   };
 
-  // Service Worker 업데이트
-  const update = async (): Promise<void> => {
-    if (!registration) {
-      console.warn('Service Worker가 등록되지 않았습니다');
-      return;
-    }
 
-    try {
-      await registration.update();
-      
-      if (registration.waiting) {
-        // 새 Service Worker에게 활성화 요청
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        
-        // 페이지 새로고침
-        window.location.reload();
-      }
-      
-      setHasUpdate(false);
-      console.log('✅ Service Worker 업데이트 완료');
-    } catch (error) {
-      console.error('Service Worker 업데이트 오류:', error);
-    }
-  };
 
   // 푸시 알림 권한 요청
   const enableNotifications = async (): Promise<boolean> => {
@@ -225,12 +182,10 @@ export function usePWA(): PWAStatus & PWAActions {
     isInstalled,
     isOnline,
     canInstall,
-    hasUpdate,
     isLoading,
     
     // 액션
     install,
-    update,
     enableNotifications,
     syncData
   };
