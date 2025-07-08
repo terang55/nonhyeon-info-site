@@ -51,12 +51,12 @@ function findNewTransactions(currentData: ProcessedDeal[], previousData: Process
 }
 
 // 가격 파싱 함수
-function parsePrice(priceStr: any): number {
+function parsePrice(priceStr: unknown): number {
   return parseInt(String(priceStr || '').replace(/,/g, '').trim()) || 0;
 }
 
 // 거래일 포맷팅 함수
-function formatDealDate(year: any, month: any, day: any): string {
+function formatDealDate(year: unknown, month: unknown, day: unknown): string {
   const y = String(year || '').padStart(4, '0');
   const m = String(month || '').padStart(2, '0');
   const d = String(day || '').padStart(2, '0');
@@ -74,7 +74,7 @@ function formatPrice(price: number): string {
 }
 
 // 평당가 계산 함수 (3.3㎡ 기준)
-function calculatePricePerPyeong(price: number, area: any): string {
+function calculatePricePerPyeong(price: number, area: unknown): string {
   const areaNum = parseFloat(String(area || ''));
   if (areaNum <= 0 || isNaN(areaNum)) return '계산불가';
   const pyeong = areaNum / 3.3;
@@ -82,7 +82,7 @@ function calculatePricePerPyeong(price: number, area: any): string {
   return formatPrice(pricePerPyeong);
 }
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
   try {
     console.log('🏠 인천 남동구 논현동 아파트 실거래가 최근 3개월 조회 시작');
     const deals: ProcessedDeal[] = [];
@@ -289,8 +289,7 @@ export async function POST(request: NextRequest) {
     const { previousData = [] } = body;
     
     // 현재 최신 데이터 가져오기 (GET과 동일한 로직)
-    const getRequest = new NextRequest(new URL('/api/realestate?months=3', request.url));
-    const currentResponse = await GET(getRequest);
+    const currentResponse = await GET();
     const currentResult = await currentResponse.json();
     
     if (!currentResult.success) {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 interface NavItem {
   icon: string;
@@ -16,13 +16,13 @@ export default function BottomNavigation() {
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState<string>('');
 
-  const navItems: NavItem[] = [
+  const navItems: NavItem[] = useMemo(() => [
     { icon: '🏠', label: '홈', path: '/' },
     { icon: '🏥', label: '의료', path: '/', isCategory: true, categoryName: '병원' },
     { icon: '🏢', label: '부동산', path: '/realestate' },
     { icon: '🎓', label: '학원', path: '/academy' },
     { icon: '🚇', label: '교통', path: '/subway' }
-  ];
+  ], []);
 
   // 현재 경로에 따라 활성 아이템 설정
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function BottomNavigation() {
     });
     
     setActiveItem(currentItem?.path + (currentItem?.categoryName || '') || '/');
-  }, [pathname]);
+  }, [pathname, navItems]);
 
   const handleNavClick = (item: NavItem) => {
     if (item.isCategory && item.categoryName) {

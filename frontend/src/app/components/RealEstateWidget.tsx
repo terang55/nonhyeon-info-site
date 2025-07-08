@@ -147,7 +147,7 @@ export default function RealEstateWidget() {
     fetchRealEstateData();
   }, [getStoredData]);
 
-  const fetchRealEstateData = async () => {
+  const fetchRealEstateData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -204,7 +204,7 @@ export default function RealEstateWidget() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [saveDataToStorage]);
 
   // 신규 거래 비교
   const compareWithPreviousData = useCallback(async () => {
@@ -425,8 +425,8 @@ export default function RealEstateWidget() {
             <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-blue-800">
               <p className="font-medium">🎯 신규 거래 확인 방법:</p>
-              <p>1. 먼저 "🔄 새로고침"을 클릭하여 현재 데이터를 저장하세요</p>
-              <p>2. 다음날 "🆕 신규 거래 확인"을 클릭하면 새로운 거래를 자동으로 탐지합니다</p>
+              <p>1. 먼저 &quot;🔄 새로고침&quot;을 클릭하여 현재 데이터를 저장하세요</p>
+              <p>2. 다음날 &quot;🆕 신규 거래 확인&quot;을 클릭하면 새로운 거래를 자동으로 탐지합니다</p>
             </div>
           </div>
         </div>
