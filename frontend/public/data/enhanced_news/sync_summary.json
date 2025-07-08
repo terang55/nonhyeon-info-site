@@ -1,5 +1,5 @@
 {
-  "sync_time": "2025-07-08T06:54:37.091049",
+  "sync_time": "2025-07-08T22:42:39.397507",
   "total_files": 1,
   "total_keywords": 10,
   "keywords": [
@@ -18,7 +18,7 @@
     "all_platforms"
   ],
   "files": {
-    "all_platforms": "all_platforms_enhanced_news_20250708_065429.json"
+    "all_platforms": "all_platforms_enhanced_news_20250708_224232.json"
   },
   "sync_type": "latest_only"
 }
