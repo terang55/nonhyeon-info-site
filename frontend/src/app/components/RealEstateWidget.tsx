@@ -555,13 +555,17 @@ export default function RealEstateWidget() {
                 {/* 확장된 상세 정보 */}
                 {expandedApartment === stat.name && (
                   <div className="mt-3 pt-3 border-t border-gray-200">
-                    <h5 className="text-xs font-semibold text-gray-700 mb-2">최근 거래 내역</h5>
-                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                    <div className="flex justify-between items-center mb-2">
+                      <h5 className="text-xs font-semibold text-gray-700">모든 거래 내역</h5>
+                      <span className="text-xs text-gray-500">
+                        {allDeals.filter(deal => deal.apartment_name === stat.name).length}건
+                      </span>
+                    </div>
+                    <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
                       {allDeals
                         .filter(deal => deal.apartment_name === stat.name)
-                        .slice(0, 3)
                         .map((deal, idx) => (
-                          <div key={idx} className={`text-xs p-2 rounded ${deal.isNew ? 'bg-green-100 border border-green-300' : 'bg-gray-100'}`}>
+                          <div key={deal.uniqueId || idx} className={`text-xs p-2 rounded transition-all ${deal.isNew ? 'bg-green-100 border border-green-300' : 'bg-gray-100 hover:bg-gray-200'}`}>
                             <div className="flex justify-between items-center">
                               <span className="font-medium">{deal.area} • {deal.floor}</span>
                               <span className="text-blue-600 font-semibold">{deal.price}</span>
@@ -569,6 +573,9 @@ export default function RealEstateWidget() {
                             <div className="flex justify-between items-center mt-1">
                               <span className="text-gray-500">{deal.build_year}년</span>
                               <span className="text-gray-500">{deal.deal_date}</span>
+                            </div>
+                            <div className="mt-1 text-gray-400">
+                              <span>평당 {deal.price_per_pyeong}</span>
                             </div>
                           </div>
                         ))}
