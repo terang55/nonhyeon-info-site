@@ -566,19 +566,19 @@ export default function HomePage() {
                 )}
                       <div className="p-3 sm:p-6">
                   {/* 헤더 */}
-                  <div className="flex items-start justify-between mb-2 sm:mb-3">
-                          <span className={`inline-flex items-center gap-1 px-3 sm:px-4 py-2 rounded-full text-sm font-medium min-h-[36px] ${
+                  <div className="flex items-start justify-between mb-2">
+                          <span className={`inline-flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium min-h-[28px] sm:min-h-[36px] ${
                       item.type === 'youtube' ? 'bg-red-100 text-red-800' :
                       item.type === 'blog' ? 'bg-green-100 text-green-800' :
                       getCategoryColor(item.type)
                     }`}>
                       {getTypeIcon(item.type)} {getTypeLabel(item.type)}
                     </span>
-                          <span className="text-sm text-gray-600 flex-shrink-0 ml-2">
+                          <span className="text-xs sm:text-sm text-gray-600 flex-shrink-0 ml-2">
                             {item.type === 'youtube' ? item.views : ''}
                     </span>
                   </div>
-                        <h3 className="text-base sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3 line-clamp-2 leading-relaxed">
+                        <h3 className="text-sm sm:text-lg font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight">
                     <a 
                       href={item.url} 
                       target="_blank" 
@@ -589,16 +589,16 @@ export default function HomePage() {
                     </a>
                   </h3>
                   {item.type !== 'youtube' && (
-                          <p className="text-gray-700 text-sm sm:text-base mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3 leading-relaxed">
+                          <p className="text-gray-700 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2 leading-tight">
                       {item.content}
                     </p>
                   )}
-                        <div className="flex items-center justify-between text-sm sm:text-base pt-2 border-t border-gray-100">
-                          <span className="font-medium text-gray-900 truncate mr-2 flex items-center gap-1">
-                            <span className="text-gray-500 text-sm">🏢</span>
-                            <span className="min-w-0 truncate">{item.type === 'youtube' ? item.channel : item.source}</span>
+                        <div className="flex items-center justify-between text-xs sm:text-sm pt-2 border-t border-gray-100">
+                          <span className="font-medium text-gray-900 truncate mr-2 flex items-center gap-1 flex-1 min-w-0">
+                            <span className="text-gray-500 text-xs">🏢</span>
+                            <span className="min-w-0 truncate text-xs sm:text-sm">{item.type === 'youtube' ? item.channel : item.source}</span>
                     </span>
-                          <span className="text-gray-600 text-sm flex-shrink-0 flex items-center gap-1">
+                          <span className="text-gray-600 text-xs flex-shrink-0 flex items-center gap-1">
                             <span className="text-gray-500">🕒</span>
                       {item.type === 'youtube' ? 
                               (item.upload_time && item.upload_time.trim() !== '' && !item.upload_time.includes('불명') ? item.upload_time : '') : 
@@ -607,8 +607,8 @@ export default function HomePage() {
                     </span>
                   </div>
                         {item.keyword && (
-                          <div className={`mt-2 sm:mt-3 pt-2 sm:pt-3 border-t`}>
-                            <span className={`inline-flex items-center px-3 py-2 rounded text-sm font-medium min-h-[32px] ${
+                          <div className={`mt-2 pt-2 border-t`}>
+                            <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium min-h-[24px] ${
                               item.type === 'youtube' ? 'bg-red-100 text-red-700' :
                               item.type === 'blog' ? 'bg-green-100 text-green-700' :
                               'bg-blue-100 text-blue-700'
