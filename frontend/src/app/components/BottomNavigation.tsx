@@ -60,27 +60,27 @@ export default function BottomNavigation() {
     <>
       {/* 하단 네비게이션 바 */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden">
-        <div className="flex justify-around items-center py-2 pb-safe">
+        <div className="flex justify-around items-center py-3 pb-safe">
           {navItems.map((item) => (
             <button
               key={item.path + (item.categoryName || '')}
               onClick={() => handleNavClick(item)}
-              className={`flex flex-col items-center py-2 px-3 transition-colors duration-200 ${
+              className={`flex flex-col items-center py-2 px-4 transition-colors duration-200 min-h-[48px] min-w-[48px] justify-center ${
                 isActive(item) 
                   ? 'text-blue-600' 
-                  : 'text-gray-500 hover:text-gray-700'
+                  : 'text-gray-600 hover:text-gray-800'
               }`}
               aria-label={`${item.label} 페이지로 이동`}
             >
-              <span className="text-xl mb-1">{item.icon}</span>
-              <span className="text-xs font-medium">{item.label}</span>
+              <span className="text-2xl mb-1">{item.icon}</span>
+              <span className="text-sm font-medium">{item.label}</span>
             </button>
           ))}
         </div>
       </nav>
 
       {/* 하단 네비게이션 바 공간 확보를 위한 패딩 */}
-      <div className="h-16 md:hidden" aria-hidden="true"></div>
+      <div className="h-20 md:hidden" aria-hidden="true"></div>
     </>
   );
 } 

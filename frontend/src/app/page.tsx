@@ -417,7 +417,7 @@ export default function HomePage() {
                 <span className="text-sm font-medium">네이버카페 논총연</span>
               </a>
               </div>
-            <div className="text-xs sm:text-sm text-gray-600 text-center">
+            <div className="text-sm sm:text-base text-gray-700 text-center leading-relaxed">
               <span className="block sm:hidden">부동산 실거래가 · 지하철 실시간 정보</span>
               <span className="hidden sm:block">논현동 실거래가 · 호구포역 · 인천논현역 · 소래포구역 실시간 정보</span>
             </div>
@@ -449,24 +449,24 @@ export default function HomePage() {
             <div className="bg-white/10 rounded-lg p-3 sm:bg-transparent sm:p-0">
               <div className="text-lg sm:text-3xl font-bold flex items-center justify-center gap-1 sm:gap-2 mb-1">
                 <span className="text-xl sm:text-4xl">📊</span>
-                <span className="text-sm sm:text-3xl">{stats?.totalArticles || news.length}</span>
+                <span className="text-base sm:text-3xl">{stats?.totalArticles || news.length}</span>
               </div>
-              <div className="text-xs sm:text-sm text-blue-200">총 콘텐츠</div>
+              <div className="text-sm sm:text-base text-blue-100">총 콘텐츠</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 sm:bg-transparent sm:p-0">
               <div className="text-lg sm:text-3xl font-bold flex items-center justify-center gap-1 sm:gap-2 mb-1">
                 <span className="text-xl sm:text-4xl">🏷️</span>
-                <span className="text-sm sm:text-3xl">{stats?.summary?.totalCategories || syncStatus?.keywords?.length || '10'}</span>
+                <span className="text-base sm:text-3xl">{stats?.summary?.totalCategories || syncStatus?.keywords?.length || '10'}</span>
               </div>
-              <div className="text-xs sm:text-sm text-blue-200">키워드</div>
+              <div className="text-sm sm:text-base text-blue-100">키워드</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 sm:bg-transparent sm:p-0">
               <div className="text-lg sm:text-3xl font-bold flex items-center justify-center gap-1 sm:gap-2 mb-1">
                 <span className="text-xl sm:text-4xl">⚡</span>
-                <span className="text-sm sm:text-3xl hidden sm:inline">실시간</span>
-                <span className="text-xs sm:text-3xl sm:hidden">실시간</span>
+                <span className="text-base sm:text-3xl hidden sm:inline">실시간</span>
+                <span className="text-sm sm:text-3xl sm:hidden">실시간</span>
               </div>
-              <div className="text-xs sm:text-sm text-blue-200">자동 업데이트</div>
+              <div className="text-sm sm:text-base text-blue-100">자동 업데이트</div>
             </div>
           </div>
           
@@ -482,7 +482,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center">
             {/* Category Filter */}
-            <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
+            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
               {categories.map(category => (
                 <button
                   key={category}
@@ -496,10 +496,10 @@ export default function HomePage() {
                       window.history.pushState({}, '', newUrl);
                     }
                   }}
-                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+                  className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-sm sm:text-base font-medium transition-colors min-h-[44px] min-w-[44px] ${
                     selectedCategory === category
                       ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                   }`}
                 >
                   <div className="flex items-center space-x-1">
@@ -542,7 +542,7 @@ export default function HomePage() {
         {loading && (
           <div className="text-center py-8 sm:py-12">
             <div className="inline-block animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-sm sm:text-base text-gray-600">데이터를 불러오는 중...</p>
+            <p className="mt-2 text-base sm:text-lg text-gray-700 leading-relaxed">데이터를 불러오는 중...</p>
           </div>
         )}
         {!loading && news.length > 0 && (
@@ -567,18 +567,18 @@ export default function HomePage() {
                       <div className="p-3 sm:p-6">
                   {/* 헤더 */}
                   <div className="flex items-start justify-between mb-2 sm:mb-3">
-                          <span className={`inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-full text-xs font-medium ${
+                          <span className={`inline-flex items-center gap-1 px-3 sm:px-4 py-2 rounded-full text-sm font-medium min-h-[36px] ${
                       item.type === 'youtube' ? 'bg-red-100 text-red-800' :
                       item.type === 'blog' ? 'bg-green-100 text-green-800' :
                       getCategoryColor(item.type)
                     }`}>
                       {getTypeIcon(item.type)} {getTypeLabel(item.type)}
                     </span>
-                          <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
+                          <span className="text-sm text-gray-600 flex-shrink-0 ml-2">
                             {item.type === 'youtube' ? item.views : ''}
                     </span>
                   </div>
-                        <h3 className="text-sm sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 line-clamp-2 leading-relaxed">
+                        <h3 className="text-base sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3 line-clamp-2 leading-relaxed">
                     <a 
                       href={item.url} 
                       target="_blank" 
@@ -589,17 +589,17 @@ export default function HomePage() {
                     </a>
                   </h3>
                   {item.type !== 'youtube' && (
-                          <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3 leading-relaxed">
+                          <p className="text-gray-700 text-sm sm:text-base mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3 leading-relaxed">
                       {item.content}
                     </p>
                   )}
-                        <div className="flex items-center justify-between text-xs sm:text-sm pt-2 border-t border-gray-100">
+                        <div className="flex items-center justify-between text-sm sm:text-base pt-2 border-t border-gray-100">
                           <span className="font-medium text-gray-900 truncate mr-2 flex items-center gap-1">
-                            <span className="text-gray-400 text-xs">🏢</span>
+                            <span className="text-gray-500 text-sm">🏢</span>
                             <span className="min-w-0 truncate">{item.type === 'youtube' ? item.channel : item.source}</span>
                     </span>
-                          <span className="text-gray-500 text-xs flex-shrink-0 flex items-center gap-1">
-                            <span className="text-gray-400">🕒</span>
+                          <span className="text-gray-600 text-sm flex-shrink-0 flex items-center gap-1">
+                            <span className="text-gray-500">🕒</span>
                       {item.type === 'youtube' ? 
                               (item.upload_time && item.upload_time.trim() !== '' && !item.upload_time.includes('불명') ? item.upload_time : '') : 
                         formatDate(item.date, item)
@@ -608,7 +608,7 @@ export default function HomePage() {
                   </div>
                         {item.keyword && (
                           <div className={`mt-2 sm:mt-3 pt-2 sm:pt-3 border-t`}>
-                            <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                            <span className={`inline-flex items-center px-3 py-2 rounded text-sm font-medium min-h-[32px] ${
                               item.type === 'youtube' ? 'bg-red-100 text-red-700' :
                               item.type === 'blog' ? 'bg-green-100 text-green-700' :
                               'bg-blue-100 text-blue-700'
@@ -625,10 +625,10 @@ export default function HomePage() {
         {!loading && news.length === 0 && !error && (
           <div className="text-center py-8 sm:py-12">
             <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">🤔</div>
-            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2 leading-relaxed">
               검색 결과가 없습니다
             </h3>
-            <p className="text-sm sm:text-base text-gray-600">
+            <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
               다른 키워드나 카테고리로 검색해보세요.
             </p>
                 </div>

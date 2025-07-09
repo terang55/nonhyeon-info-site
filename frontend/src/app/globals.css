@@ -135,7 +135,7 @@ body {
   /* 하단 네비게이션을 위한 바디 패딩 */
   @media (max-width: 768px) {
     body {
-      padding-bottom: calc(64px + env(safe-area-inset-bottom));
+      padding-bottom: calc(80px + env(safe-area-inset-bottom));
     }
   }
 }

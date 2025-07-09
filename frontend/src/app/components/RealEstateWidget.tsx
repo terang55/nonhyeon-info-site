@@ -206,7 +206,7 @@ export default function RealEstateWidget() {
         <h2 className="text-lg font-bold text-gray-800 flex items-center">
           🏠 논현동 아파트 실거래가
         </h2>
-        <div className="text-xs text-gray-500">
+        <div className="text-sm text-gray-600">
           {data?.statistics?.period || '데이터 로딩중'}
         </div>
       </div>
@@ -216,7 +216,7 @@ export default function RealEstateWidget() {
         <button
           onClick={fetchRealEstateData}
           disabled={loading}
-          className="flex items-center justify-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+          className="flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm min-h-[44px]"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -226,7 +226,7 @@ export default function RealEstateWidget() {
           <span>새로고침</span>
         </button>
 
-        <div className="text-xs text-gray-500">
+        <div className="text-sm text-gray-700 leading-relaxed">
           자동으로 어제와 비교하여 신규 거래를 표시합니다
         </div>
       </div>
@@ -244,18 +244,18 @@ export default function RealEstateWidget() {
             }`}>
               ✨ 어제 대비 신규 거래
               {newTransactionsFromYesterday.length > 0 ? (
-                <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">
+                <span className="ml-2 text-sm bg-orange-100 text-orange-800 px-3 py-2 rounded-full min-h-[32px] flex items-center">
                   {newTransactionsFromYesterday.length}건 신규
                 </span>
               ) : (
-                <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                <span className="ml-2 text-sm bg-gray-100 text-gray-700 px-3 py-2 rounded-full min-h-[32px] flex items-center">
                   신규 거래 없음
                 </span>
               )}
             </h3>
             {yesterdayDate && (
-              <div className={`text-xs ${
-                newTransactionsFromYesterday.length > 0 ? 'text-orange-600' : 'text-gray-500'
+              <div className={`text-sm ${
+                newTransactionsFromYesterday.length > 0 ? 'text-orange-700' : 'text-gray-600'
               }`}>
                 기준: {yesterdayDate}
               </div>
@@ -272,38 +272,38 @@ export default function RealEstateWidget() {
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-semibold text-gray-800 text-sm">
+                        <span className="font-semibold text-gray-900 text-base">
                           {deal.apartment_name}
                         </span>
-                        <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full font-medium">
+                        <span className="text-sm bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-medium min-h-[28px] flex items-center">
                           NEW
                         </span>
                       </div>
-                      <div className="text-xs text-gray-600 space-y-1">
+                      <div className="text-sm text-gray-700 space-y-1 leading-relaxed">
                         <div>{deal.area} • {deal.floor} • {deal.build_year}년</div>
-                        <div className="text-orange-600 font-medium">평당 {deal.price_per_pyeong}</div>
+                        <div className="text-orange-700 font-medium">평당 {deal.price_per_pyeong}</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-orange-700 text-sm">{deal.price}</div>
-                      <div className="text-xs text-gray-500">{deal.deal_date}</div>
+                      <div className="font-bold text-orange-800 text-base">{deal.price}</div>
+                      <div className="text-sm text-gray-600">{deal.deal_date}</div>
                     </div>
                   </div>
                 </div>
               ))}
               
               {newTransactionsFromYesterday.length > 5 && (
-                <div className="text-center text-xs text-orange-600 pt-2">
+                <div className="text-center text-sm text-orange-700 pt-2">
                   외 {newTransactionsFromYesterday.length - 5}건 더...
                 </div>
               )}
             </div>
           ) : (
             <div className="text-center py-6">
-              <div className="text-gray-500 text-sm">
+              <div className="text-gray-700 text-base leading-relaxed">
                 😊 어제와 비교했을 때 신규 거래가 없습니다
               </div>
-              <div className="text-gray-400 text-xs mt-1">
+              <div className="text-gray-600 text-sm mt-1 leading-relaxed">
                 새로운 거래가 등록되면 자동으로 여기에 표시됩니다
               </div>
             </div>
@@ -321,7 +321,7 @@ export default function RealEstateWidget() {
           onChange={(e) => setSearchTerm(e.target.value)}
           list="apartment-options"
           placeholder="단지명을 입력하세요 (예: 에코메트로)"
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+          className="w-full border border-gray-300 rounded px-4 py-3 text-base focus:ring-blue-500 focus:border-blue-500 min-h-[44px]"
         />
         <datalist id="apartment-options">
           {apartmentNames.map((name) => (
@@ -332,17 +332,17 @@ export default function RealEstateWidget() {
       
       {/* 전체 통계 요약 */}
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="bg-white border border-blue-200 rounded-lg p-3 text-center shadow-sm">
-          <p className="text-xs text-blue-600 font-medium mb-1">평균가</p>
-          <p className="text-sm font-bold text-blue-700 sm:whitespace-nowrap">{data?.statistics?.avg_price || '계산중'}</p>
+        <div className="bg-white border border-blue-200 rounded-lg p-4 text-center shadow-sm">
+          <p className="text-sm text-blue-700 font-medium mb-1">평균가</p>
+          <p className="text-base font-bold text-blue-800 sm:whitespace-nowrap">{data?.statistics?.avg_price || '계산중'}</p>
         </div>
-        <div className="bg-white border border-red-200 rounded-lg p-3 text-center shadow-sm">
-          <p className="text-xs text-red-600 font-medium mb-1">최고가</p>
-          <p className="text-sm font-bold text-red-700 sm:whitespace-nowrap">{data?.statistics?.max_price || '계산중'}</p>
+        <div className="bg-white border border-red-200 rounded-lg p-4 text-center shadow-sm">
+          <p className="text-sm text-red-700 font-medium mb-1">최고가</p>
+          <p className="text-base font-bold text-red-800 sm:whitespace-nowrap">{data?.statistics?.max_price || '계산중'}</p>
         </div>
-        <div className="bg-white border border-green-200 rounded-lg p-3 text-center shadow-sm">
-          <p className="text-xs text-green-600 font-medium mb-1">최저가</p>
-          <p className="text-sm font-bold text-green-700 sm:whitespace-nowrap">{data?.statistics?.min_price || '계산중'}</p>
+        <div className="bg-white border border-green-200 rounded-lg p-4 text-center shadow-sm">
+          <p className="text-sm text-green-700 font-medium mb-1">최저가</p>
+          <p className="text-base font-bold text-green-800 sm:whitespace-nowrap">{data?.statistics?.min_price || '계산중'}</p>
         </div>
       </div>
 
@@ -356,7 +356,7 @@ export default function RealEstateWidget() {
             </h3>
             <button
               onClick={() => setShowAllDeals(!showAllDeals)}
-              className="text-xs text-blue-600 hover:text-blue-800 transition-colors"
+              className="text-sm text-blue-700 hover:text-blue-900 transition-colors px-3 py-2 min-h-[36px]"
             >
               {showAllDeals ? '접기' : `전체보기 (${allDeals.length}건)`}
             </button>
@@ -373,22 +373,22 @@ export default function RealEstateWidget() {
               >
                 <div className="flex justify-between items-start mb-0.5">
                   <div className="flex items-center space-x-2">
-                    <h3 className="font-semibold text-gray-800 text-sm">{deal.apartment_name}</h3>
+                    <h3 className="font-semibold text-gray-900 text-base">{deal.apartment_name}</h3>
                     {deal.isNew && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 animate-bounce">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 animate-bounce min-h-[28px]">
                         ✨ NEW
                       </span>
                     )}
                   </div>
-                  <span className="text-xs text-gray-500">{deal.deal_date}</span>
+                  <span className="text-sm text-gray-600">{deal.deal_date}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <div className="text-xs text-gray-600">
+                  <div className="text-sm text-gray-700 leading-relaxed">
                     <span>{deal.area} • {deal.floor} • {deal.build_year}년</span>
                   </div>
                   <div className="text-right pr-1 md:pr-2 lg:pr-3">
-                    <p className="font-bold text-blue-600 text-sm">{deal.price}</p>
-                    <p className="text-xs text-gray-500">평당 {deal.price_per_pyeong}</p>
+                    <p className="font-bold text-blue-700 text-base">{deal.price}</p>
+                    <p className="text-sm text-gray-600">평당 {deal.price_per_pyeong}</p>
                   </div>
                 </div>
               </div>
