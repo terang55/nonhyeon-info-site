@@ -1,6 +1,6 @@
-const CACHE_NAME = 'nonhyeon-life-v1.1.0';
-const STATIC_CACHE = 'static-v2';
-const DYNAMIC_CACHE = 'dynamic-v2';
+const CACHE_NAME = 'nonhyeon-life-v1.2.0-no-updates';
+const STATIC_CACHE = 'static-v3-no-updates';
+const DYNAMIC_CACHE = 'dynamic-v3-no-updates';
 
 // 캐시할 정적 파일들
 const STATIC_FILES = [
@@ -35,7 +35,8 @@ self.addEventListener('install', (event) => {
       })
       .then(() => {
         console.log('✅ Service Worker 설치 완료');
-        return self.skipWaiting();
+        // 자동 업데이트 비활성화 - skipWaiting() 제거
+        // return self.skipWaiting();
       })
       .catch((error) => {
         console.error('❌ Service Worker 설치 실패:', error);
@@ -61,7 +62,8 @@ self.addEventListener('activate', (event) => {
       })
       .then(() => {
         console.log('✅ Service Worker 활성화 완료');
-        return self.clients.claim();
+        // 자동 업데이트 알림 비활성화 - clients.claim() 제거
+        // return self.clients.claim();
       })
   );
 });
@@ -192,33 +194,34 @@ self.addEventListener('sync', (event) => {
   }
 });
 
-// 푸시 알림 수신
+// 푸시 알림 수신 (비활성화)
 self.addEventListener('push', (event) => {
-  console.log('📲 푸시 알림 수신:', event);
+  console.log('📲 푸시 알림 수신 (비활성화됨):', event);
   
-  const options = {
-    body: event.data ? event.data.text() : '새로운 소식이 있습니다!',
-    icon: '/android-chrome-192x192.png',
-    badge: '/favicon-32x32.png',
-    tag: 'news-notification',
-    renotify: true,
-    requireInteraction: false,
-    actions: [
-      {
-        action: 'view',
-        title: '확인하기',
-        icon: '/android-chrome-192x192.png'
-      },
-      {
-        action: 'close',
-        title: '닫기'
-      }
-    ]
-  };
+  // 푸시 알림 비활성화 - 알림 표시하지 않음
+  // const options = {
+  //   body: event.data ? event.data.text() : '새로운 소식이 있습니다!',
+  //   icon: '/android-chrome-192x192.png',
+  //   badge: '/favicon-32x32.png',
+  //   tag: 'news-notification',
+  //   renotify: true,
+  //   requireInteraction: false,
+  //   actions: [
+  //     {
+  //       action: 'view',
+  //       title: '확인하기',
+  //       icon: '/android-chrome-192x192.png'
+  //     },
+  //     {
+  //       action: 'close',
+  //       title: '닫기'
+  //     }
+  //   ]
+  // };
 
-  event.waitUntil(
-    self.registration.showNotification('인천논현라이프', options)
-  );
+  // event.waitUntil(
+  //   self.registration.showNotification('인천논현라이프', options)
+  // );
 });
 
 // 알림 클릭 처리
@@ -248,9 +251,11 @@ async function syncNewsData() {
   }
 }
 
-// 메시지 수신 처리
+// 메시지 수신 처리 (자동 업데이트 비활성화)
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+    // 자동 업데이트 비활성화 - skipWaiting() 제거
+    console.log('⚠️ 자동 업데이트가 비활성화되어 있습니다.');
+    // self.skipWaiting();
   }
 }); 
