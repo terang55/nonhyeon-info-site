@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Loader2, RefreshCw, Sparkles, Info } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 
 interface Deal {
   apartment_name: string;
@@ -72,6 +72,7 @@ export default function RealEstateWidget() {
 
   useEffect(() => {
     fetchRealEstateData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchRealEstateData = useCallback(async () => {

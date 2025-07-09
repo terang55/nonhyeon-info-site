@@ -134,14 +134,7 @@ function shouldUpdateYesterdayData(): boolean {
   return yesterdayData.date !== today;
 }
 
-// 기준 데이터 업데이트 필요 여부 확인 (1일 1회)
-function shouldUpdateBaseline(): boolean {
-  const baseline = readBaselineData();
-  if (!baseline) return true;
-  
-  const today = new Date().toISOString().split('T')[0];
-  return baseline.lastUpdateDate !== today;
-}
+
 
 // 신규 거래 비교 함수
 function findNewTransactions(currentData: ProcessedDeal[], previousData: ProcessedDeal[]): ProcessedDeal[] {
