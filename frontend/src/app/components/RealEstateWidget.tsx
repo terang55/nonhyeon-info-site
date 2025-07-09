@@ -44,7 +44,10 @@ interface RealEstateResponse {
   data: RealEstateData;
   newTransactions?: Deal[];
   newCount?: number;
+  newTransactionsFromYesterday?: Deal[];
+  newCountFromYesterday?: number;
   baselineDate?: string | null;
+  yesterdayDate?: string | null;
   location: string;
   timestamp: string;
 }
@@ -62,11 +65,8 @@ export default function RealEstateWidget() {
   const [expandedApartment, setExpandedApartment] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [highlight, setHighlight] = useState<string | null>(null);
-  const [showNewOnly, setShowNewOnly] = useState(false);
-  const [newTransactions, setNewTransactions] = useState<Deal[]>([]);
-  const [baselineDate, setBaselineDate] = useState<string | null>(null);
-  const [isUpdatingBaseline, setIsUpdatingBaseline] = useState(false);
-  const [celebrationMessage, setCelebrationMessage] = useState<string | null>(null);
+  const [newTransactionsFromYesterday, setNewTransactionsFromYesterday] = useState<Deal[]>([]);
+  const [yesterdayDate, setYesterdayDate] = useState<string | null>(null);
   
   const apartmentRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -119,8 +119,8 @@ export default function RealEstateWidget() {
         });
         
         // 신규 거래 정보 설정
-        setNewTransactions(result.newTransactions || []);
-        setBaselineDate(result.baselineDate || null);
+        setNewTransactionsFromYesterday(result.newTransactionsFromYesterday || []);
+        setYesterdayDate(result.yesterdayDate || null);
         
         console.log('✅ 부동산 데이터 로드 완료:', dealsWithIds.length, '건');
       } else {
@@ -134,55 +134,7 @@ export default function RealEstateWidget() {
     }
   }, []);
 
-  // 기준 데이터 업데이트 함수
-  const updateBaselineData = useCallback(async () => {
-    try {
-      setIsUpdatingBaseline(true);
-      setError(null);
 
-      console.log('🔄 기준 데이터 업데이트 시작');
-      
-      // POST API로 기준 데이터 업데이트 요청
-      const response = await fetch('/api/realestate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        },
-        body: JSON.stringify({
-          action: 'update_baseline'
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      console.log('🔍 기준 데이터 업데이트 결과:', result);
-
-      if (result.success) {
-        setCelebrationMessage(`✅ 기준 데이터가 업데이트되었습니다! (${result.baselineCount}건)`);
-        
-        // 데이터 새로고침
-        await fetchRealEstateData();
-        
-        // 메시지 3초 후 제거
-        setTimeout(() => setCelebrationMessage(null), 3000);
-        
-        console.log('✅ 기준 데이터 업데이트 완료:', result.baselineCount, '건');
-      } else {
-        setError('기준 데이터 업데이트에 실패했습니다.');
-      }
-      
-    } catch (error) {
-      console.error('기준 데이터 업데이트 오류:', error);
-      setError('기준 데이터 업데이트 중 오류가 발생했습니다.');
-    } finally {
-      setIsUpdatingBaseline(false);
-    }
-  }, []);
 
   // 검색어가 단지명과 정확히 일치하면 해당 카드로 스크롤 & 강조
   useEffect(() => {
@@ -244,31 +196,22 @@ export default function RealEstateWidget() {
     (data?.apartment_stats || []).map(stat => stat.name)
   ));
   
-  // 표시할 거래 필터링 - 안전한 처리
+  // 표시할 거래 - 안전한 처리
   const allDeals = data?.deals || [];
-  const displayDeals = showNewOnly ? allDeals.filter(deal => deal.isNew) : allDeals;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      {/* 축하 메시지 */}
-      {celebrationMessage && (
-        <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-bounce">
-          {celebrationMessage}
-        </div>
-      )}
-      
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-gray-800 flex items-center">
           🏠 논현동 아파트 실거래가
         </h2>
         <div className="text-xs text-gray-500">
           {data?.statistics?.period || '데이터 로딩중'}
-          {baselineDate && ` • 기준: ${baselineDate}`}
         </div>
       </div>
 
-      {/* 컨트롤 버튼 */}
-      <div className="mb-4 flex flex-col sm:flex-row gap-2">
+            {/* 컨트롤 버튼 - 새로고침만 유지 */}
+      <div className="mb-4 flex justify-between items-center">
         <button
           onClick={fetchRealEstateData}
           disabled={loading}
@@ -282,67 +225,90 @@ export default function RealEstateWidget() {
           <span>새로고침</span>
         </button>
 
-        <button
-          onClick={updateBaselineData}
-          disabled={isUpdatingBaseline}
-          className="flex items-center justify-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
-        >
-          {isUpdatingBaseline ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Sparkles className="h-4 w-4" />
-          )}
-          <span>📌 기준점 설정</span>
-        </button>
-
-        {newTransactions.length > 0 && (
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setShowNewOnly(true)}
-              className={`px-3 py-2 rounded-lg transition-colors text-sm ${
-                showNewOnly
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              신규만 보기 ({newTransactions.length})
-            </button>
-            <button
-              onClick={() => setShowNewOnly(false)}
-              className={`px-3 py-2 rounded-lg transition-colors text-sm ${
-                !showNewOnly
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              전체 보기 ({allDeals.length})
-            </button>
-          </div>
-        )}
+        <div className="text-xs text-gray-500">
+          자동으로 어제와 비교하여 신규 거래를 표시합니다
+        </div>
       </div>
 
-      {/* 축하 메시지 */}
-      {celebrationMessage && (
-        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg animate-pulse">
-          <div className="text-sm text-green-800 font-medium text-center">
-            {celebrationMessage}
+      {/* 어제 대비 신규 거래 섹션 - 항상 표시 */}
+      <div className="mb-4">
+        <div className={`rounded-lg p-4 ${
+          newTransactionsFromYesterday.length > 0 
+            ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200'
+            : 'bg-gray-50 border border-gray-200'
+        }`}>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className={`font-bold flex items-center ${
+              newTransactionsFromYesterday.length > 0 ? 'text-orange-700' : 'text-gray-600'
+            }`}>
+              ✨ 어제 대비 신규 거래
+              {newTransactionsFromYesterday.length > 0 ? (
+                <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">
+                  {newTransactionsFromYesterday.length}건 신규
+                </span>
+              ) : (
+                <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                  신규 거래 없음
+                </span>
+              )}
+            </h3>
+            {yesterdayDate && (
+              <div className={`text-xs ${
+                newTransactionsFromYesterday.length > 0 ? 'text-orange-600' : 'text-gray-500'
+              }`}>
+                기준: {yesterdayDate}
+              </div>
+            )}
           </div>
-        </div>
-      )}
-
-      {/* 안내 메시지 */}
-      {!baselineDate && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-start space-x-2">
-            <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div className="text-xs text-blue-800">
-              <p className="font-medium">🎯 신규 거래 확인 방법:</p>
-              <p>1. 먼저 &quot;📌 기준점 설정&quot;을 클릭하여 현재 데이터를 기준으로 설정하세요</p>
-              <p>2. 다음날 새로고침하면 기준점 이후의 신규 거래가 자동으로 표시됩니다</p>
+          
+          {newTransactionsFromYesterday.length > 0 ? (
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {newTransactionsFromYesterday.slice(0, 5).map((deal, idx) => (
+                <div
+                  key={`new-yesterday-${deal.uniqueId || idx}`}
+                  className="bg-white border border-orange-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <span className="font-semibold text-gray-800 text-sm">
+                          {deal.apartment_name}
+                        </span>
+                        <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full font-medium">
+                          NEW
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-600 space-y-1">
+                        <div>{deal.area} • {deal.floor} • {deal.build_year}년</div>
+                        <div className="text-orange-600 font-medium">평당 {deal.price_per_pyeong}</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-bold text-orange-700 text-sm">{deal.price}</div>
+                      <div className="text-xs text-gray-500">{deal.deal_date}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {newTransactionsFromYesterday.length > 5 && (
+                <div className="text-center text-xs text-orange-600 pt-2">
+                  외 {newTransactionsFromYesterday.length - 5}건 더...
+                </div>
+              )}
             </div>
-          </div>
+          ) : (
+            <div className="text-center py-6">
+              <div className="text-gray-500 text-sm">
+                😊 어제와 비교했을 때 신규 거래가 없습니다
+              </div>
+              <div className="text-gray-400 text-xs mt-1">
+                새로운 거래가 등록되면 자동으로 여기에 표시됩니다
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* 검색 입력 */}
       <div className="mb-4">
@@ -378,29 +344,24 @@ export default function RealEstateWidget() {
           <p className="text-sm font-bold text-green-700 sm:whitespace-nowrap">{data?.statistics?.min_price || '계산중'}</p>
         </div>
       </div>
-      
+
       {/* 좌우 2단 레이아웃 */}
       <div className="flex flex-col md:flex-row gap-4">
         {/* 최신 거래 */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
-            <h3 className="font-bold text-blue-700">
+                        <h3 className="font-bold text-blue-700">
               최신 거래
-              {showNewOnly && newTransactions.length > 0 && (
-                <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                  신규 {newTransactions.length}건
-                </span>
-              )}
             </h3>
             <button
               onClick={() => setShowAllDeals(!showAllDeals)}
               className="text-xs text-blue-600 hover:text-blue-800 transition-colors"
             >
-              {showAllDeals ? '접기' : `전체보기 (${displayDeals.length}건)`}
+              {showAllDeals ? '접기' : `전체보기 (${allDeals.length}건)`}
             </button>
           </div>
           <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar pr-10 md:pr-6 pb-3">
-            {displayDeals.slice(0, showAllDeals ? displayDeals.length : 10).map((deal, index) => (
+            {allDeals.slice(0, showAllDeals ? allDeals.length : 10).map((deal: Deal, index: number) => (
               <div 
                 key={deal.uniqueId || index} 
                 className={`border-l-4 pl-3 py-1.5 rounded-r transition-all ${

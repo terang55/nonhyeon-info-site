@@ -9,8 +9,9 @@ const MOLIT_BASE_URL = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getR
 
 const AREA_CODE = '28200'; // 인천 남동구
 
-// 서버 기반 기준 데이터 파일 경로
+// 서버 기반 데이터 파일 경로
 const BASELINE_DATA_PATH = path.join(process.cwd(), 'data', 'realestate_baseline.json');
+const YESTERDAY_DATA_PATH = path.join(process.cwd(), 'data', 'realestate_yesterday.json');
 
 interface ProcessedDeal {
   apartment_name: string;
@@ -39,11 +40,17 @@ function generateUniqueId(deal: ProcessedDeal): string {
   return `${deal.apartment_name}-${deal.area}-${deal.floor}-${deal.deal_date}-${deal.price_numeric}`;
 }
 
-// 서버 기반 기준 데이터 관리 함수들
+// 서버 기반 데이터 관리 함수들
 interface BaselineData {
   deals: ProcessedDeal[];
   timestamp: string;
   lastUpdateDate: string;
+}
+
+interface YesterdayData {
+  deals: ProcessedDeal[];
+  timestamp: string;
+  date: string; // YYYY-MM-DD 형식
 }
 
 // 기준 데이터 읽기
@@ -56,6 +63,20 @@ function readBaselineData(): BaselineData | null {
     return JSON.parse(data);
   } catch (error) {
     console.error('❌ 기준 데이터 읽기 오류:', error);
+    return null;
+  }
+}
+
+// 어제 데이터 읽기
+function readYesterdayData(): YesterdayData | null {
+  try {
+    if (!fs.existsSync(YESTERDAY_DATA_PATH)) {
+      return null;
+    }
+    const data = fs.readFileSync(YESTERDAY_DATA_PATH, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('❌ 어제 데이터 읽기 오류:', error);
     return null;
   }
 }
@@ -80,6 +101,37 @@ function saveBaselineData(deals: ProcessedDeal[]): void {
   } catch (error) {
     console.error('❌ 기준 데이터 저장 오류:', error);
   }
+}
+
+// 어제 데이터 저장
+function saveYesterdayData(deals: ProcessedDeal[]): void {
+  try {
+    // data 디렉토리 생성 (존재하지 않는 경우)
+    const dataDir = path.dirname(YESTERDAY_DATA_PATH);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    const yesterdayData: YesterdayData = {
+      deals,
+      timestamp: new Date().toISOString(),
+      date: new Date().toISOString().split('T')[0] // YYYY-MM-DD 형식
+    };
+    
+    fs.writeFileSync(YESTERDAY_DATA_PATH, JSON.stringify(yesterdayData, null, 2));
+    console.log('✅ 어제 데이터 저장 완료:', deals.length, '건');
+  } catch (error) {
+    console.error('❌ 어제 데이터 저장 오류:', error);
+  }
+}
+
+// 어제 데이터 업데이트 필요 여부 확인
+function shouldUpdateYesterdayData(): boolean {
+  const yesterdayData = readYesterdayData();
+  if (!yesterdayData) return true;
+  
+  const today = new Date().toISOString().split('T')[0];
+  return yesterdayData.date !== today;
 }
 
 // 기준 데이터 업데이트 필요 여부 확인 (1일 1회)
@@ -146,6 +198,10 @@ export async function GET(): Promise<NextResponse> {
     // 기준 데이터 읽기 (신규 거래 표시용)
     const baselineData = readBaselineData();
     console.log('📊 기준 데이터:', baselineData ? `${baselineData.deals.length}건 (${baselineData.lastUpdateDate})` : '없음');
+    
+    // 어제 데이터 읽기 (일일 신규 거래 비교용)
+    const yesterdayData = readYesterdayData();
+    console.log('📅 어제 데이터:', yesterdayData ? `${yesterdayData.deals.length}건 (${yesterdayData.date})` : '없음');
     
     const deals: ProcessedDeal[] = [];
     const parser = new XMLParser({ ignoreAttributes: false, trimValues: true });
@@ -267,6 +323,24 @@ export async function GET(): Promise<NextResponse> {
       arr.findIndex(d => d.apartment_name === deal.apartment_name && d.area === deal.area && d.floor === deal.floor && d.deal_date === deal.deal_date) === idx
     );
     
+    // 어제 데이터와 비교하여 신규 거래 찾기
+    let newTransactionsFromYesterday: ProcessedDeal[] = [];
+    if (yesterdayData) {
+      newTransactionsFromYesterday = findNewTransactions(uniqueDeals, yesterdayData.deals);
+      console.log('🆕 어제 대비 신규 거래:', newTransactionsFromYesterday.length, '건 발견');
+    } else {
+      console.log('📅 어제 데이터가 없어서 첫 실행 - 현재 데이터를 어제 데이터로 설정');
+      // 어제 데이터가 없으면 현재 데이터를 어제 데이터로 설정 (첫 실행)
+      saveYesterdayData(uniqueDeals);
+    }
+    
+    // 어제 데이터 업데이트 (날짜가 바뀌었으면)
+    if (yesterdayData && shouldUpdateYesterdayData()) {
+      // 어제 데이터가 있고 날짜가 바뀌었으면 업데이트
+      saveYesterdayData(uniqueDeals);
+      console.log('💾 어제 데이터 업데이트 완료 (날짜 변경)');
+    }
+    
     // 신규 거래 표시 (기준 데이터와 비교)
     let dealsWithNewFlag = uniqueDeals;
     if (baselineData) {
@@ -279,13 +353,16 @@ export async function GET(): Promise<NextResponse> {
         isNew: newTransactionIds.has(generateUniqueId(deal))
       }));
       
-      console.log('🆕 신규 거래:', newTransactions.length, '건 발견');
+      console.log('🆕 기준점 대비 신규 거래:', newTransactions.length, '건 발견');
     } else {
-      // 기준 데이터가 없으면 모든 거래에 고유 ID만 추가
+      // 기준 데이터가 없으면 자동으로 생성 (첫 실행)
+      console.log('📊 기준 데이터가 없어서 첫 실행 - 현재 데이터를 기준으로 설정');
+      saveBaselineData(uniqueDeals);
+      
       dealsWithNewFlag = uniqueDeals.map(deal => ({
         ...deal,
         uniqueId: generateUniqueId(deal),
-        isNew: false
+        isNew: false // 첫 실행이므로 모든 거래는 신규가 아님
       }));
     }
     
@@ -356,9 +433,12 @@ export async function GET(): Promise<NextResponse> {
         },
         apartment_stats: apartmentStatsArray
       },
-      newTransactions,
+      newTransactions, // 기준점 대비 신규 거래
       newCount: newTransactions.length,
+      newTransactionsFromYesterday, // 어제 대비 신규 거래
+      newCountFromYesterday: newTransactionsFromYesterday.length,
       baselineDate: baselineData?.lastUpdateDate || null,
+      yesterdayDate: yesterdayData?.date || null,
       location: '인천 남동구 논현동',
       timestamp: new Date().toISOString()
     }, {
