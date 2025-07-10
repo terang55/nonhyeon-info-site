@@ -137,8 +137,12 @@ class EnhancedNonhyeonCrawler:
 
             # 2025-07 네이버 UI 개편 대응: fallback 컨테이너
             if len(news_areas) == 0:
-                news_areas = soup.select('div.sds-comps-vertical-layout.sds-comps-full-layout.BHQHyn3Flk5rFBSacJkG')
-                logger.debug(f"Fallback BHQ 컨테이너 발견: {len(news_areas)}개 (BHQHyn3...)")
+                # 새로운 2025-07 네이버 뉴스 UI 대응
+                # div.sds-comps-vertical-layout.sds-comps-full-layout 요소 중
+                # 헤드라인(span.sds-comps-text-type-headline1)이 포함된 컨테이너만 필터링
+                candidate_areas = soup.select('div.sds-comps-vertical-layout.sds-comps-full-layout')
+                news_areas = [c for c in candidate_areas if c.select_one('span.sds-comps-text-type-headline1')]
+                logger.debug(f"새 UI 컨테이너 발견: {len(news_areas)}개 (sds-comps-vertical-layout)")
             
             for idx, area in enumerate(news_areas[:10]):  # 최대 10개까지 가져와서 중복 제거 단계로 넘김
                 try:

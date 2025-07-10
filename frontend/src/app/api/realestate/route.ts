@@ -40,6 +40,15 @@ function generateUniqueId(deal: ProcessedDeal): string {
   return `${deal.apartment_name}-${deal.area}-${deal.floor}-${deal.deal_date}-${deal.price_numeric}`;
 }
 
+// KST(UTC+9) 기준 YYYY-MM-DD 반환 함수
+function getKoreaDateString(offsetDays: number = 0): string {
+  const now = new Date();
+  // 현재 시간을 UTC 기준 ms 로 변환 후, KST 오프셋(9시간)과 추가 오프셋 적용
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const koreaMs = utc + (9 * 60 + 0) * 60000 + offsetDays * 24 * 60 * 60000;
+  return new Date(koreaMs).toISOString().split('T')[0];
+}
+
 // 서버 기반 데이터 관리 함수들
 interface BaselineData {
   deals: ProcessedDeal[];
@@ -93,7 +102,7 @@ function saveBaselineData(deals: ProcessedDeal[]): void {
     const baselineData: BaselineData = {
       deals,
       timestamp: new Date().toISOString(),
-      lastUpdateDate: new Date().toISOString().split('T')[0] // YYYY-MM-DD 형식
+      lastUpdateDate: getKoreaDateString() // YYYY-MM-DD (KST)
     };
     
     fs.writeFileSync(BASELINE_DATA_PATH, JSON.stringify(baselineData, null, 2));
@@ -115,7 +124,7 @@ function saveYesterdayData(deals: ProcessedDeal[]): void {
     const yesterdayData: YesterdayData = {
       deals,
       timestamp: new Date().toISOString(),
-      date: new Date().toISOString().split('T')[0] // YYYY-MM-DD 형식
+      date: getKoreaDateString() // YYYY-MM-DD (KST)
     };
     
     fs.writeFileSync(YESTERDAY_DATA_PATH, JSON.stringify(yesterdayData, null, 2));
@@ -130,7 +139,7 @@ function shouldUpdateYesterdayData(): boolean {
   const yesterdayData = readYesterdayData();
   if (!yesterdayData) return true;
   
-  const today = new Date().toISOString().split('T')[0];
+  const today = getKoreaDateString();
   return yesterdayData.date !== today;
 }
 
@@ -189,11 +198,20 @@ export async function GET(): Promise<NextResponse> {
     console.log('🏠 인천 남동구 논현동 아파트 실거래가 최근 3개월 조회 시작');
     
     // 기준 데이터 읽기 (신규 거래 표시용)
-    const baselineData = readBaselineData();
+    let baselineData = readBaselineData();
     console.log('📊 기준 데이터:', baselineData ? `${baselineData.deals.length}건 (${baselineData.lastUpdateDate})` : '없음');
     
     // 어제 데이터 읽기 (일일 신규 거래 비교용)
     const yesterdayData = readYesterdayData();
+
+    // 비교 기준을 '전일 스냅샷'으로 통일
+    if (yesterdayData) {
+      baselineData = {
+        deals: yesterdayData.deals,
+        timestamp: yesterdayData.timestamp,
+        lastUpdateDate: yesterdayData.date
+      } as BaselineData;
+    }
     console.log('📅 어제 데이터:', yesterdayData ? `${yesterdayData.deals.length}건 (${yesterdayData.date})` : '없음');
     
     const deals: ProcessedDeal[] = [];
@@ -332,6 +350,14 @@ export async function GET(): Promise<NextResponse> {
       // 어제 데이터가 있고 날짜가 바뀌었으면 업데이트
       saveYesterdayData(uniqueDeals);
       console.log('💾 어제 데이터 업데이트 완료 (날짜 변경)');
+
+      // 기준 데이터도 전일 스냅샷으로 동기화하여 항상 비교 기준을 최신(전일)으로 유지
+      saveBaselineData(yesterdayData.deals);
+      baselineData = {
+        deals: yesterdayData.deals,
+        timestamp: yesterdayData.timestamp,
+        lastUpdateDate: yesterdayData.date
+      } as BaselineData;
     }
     
     // 신규 거래 표시 (기준 데이터와 비교)

@@ -1,6 +1,54 @@
 {
   "deals": [
     {
+      "apartment_name": "냇마을신영지웰(9단지)",
+      "area": "96.5212㎡",
+      "floor": "20층",
+      "price": "5억 2,500만원",
+      "price_numeric": 52500,
+      "deal_date": "2025.07.09",
+      "build_year": "2007",
+      "location": "논현동",
+      "price_per_pyeong": "1,795만원",
+      "uniqueId": "냇마을신영지웰(9단지)-96.5212㎡-20층-2025.07.09-52500"
+    },
+    {
+      "apartment_name": "논현신일해피트리",
+      "area": "101.872㎡",
+      "floor": "9층",
+      "price": "4억 9,000만원",
+      "price_numeric": 49000,
+      "deal_date": "2025.07.09",
+      "build_year": "2007",
+      "location": "논현동",
+      "price_per_pyeong": "1,587만원",
+      "uniqueId": "논현신일해피트리-101.872㎡-9층-2025.07.09-49000"
+    },
+    {
+      "apartment_name": "에코메트로11",
+      "area": "84.993㎡",
+      "floor": "27층",
+      "price": "5억 1,000만원",
+      "price_numeric": 51000,
+      "deal_date": "2025.07.08",
+      "build_year": "2009",
+      "location": "논현동",
+      "price_per_pyeong": "1,980만원",
+      "uniqueId": "에코메트로11-84.993㎡-27층-2025.07.08-51000"
+    },
+    {
+      "apartment_name": "주공1단지",
+      "area": "59.13㎡",
+      "floor": "10층",
+      "price": "2억 5,000만원",
+      "price_numeric": 25000,
+      "deal_date": "2025.07.08",
+      "build_year": "1998",
+      "location": "논현동",
+      "price_per_pyeong": "1,395만원",
+      "uniqueId": "주공1단지-59.13㎡-10층-2025.07.08-25000"
+    },
+    {
       "apartment_name": "논현신일해피트리",
       "area": "116.804㎡",
       "floor": "12층",
@@ -121,6 +169,18 @@
       "uniqueId": "에코메트로12-84.997㎡-18층-2025.07.04-47500"
     },
     {
+      "apartment_name": "에코메트로10",
+      "area": "117.992㎡",
+      "floor": "12층",
+      "price": "6억 9,500만원",
+      "price_numeric": 69500,
+      "deal_date": "2025.07.03",
+      "build_year": "2010",
+      "location": "논현동",
+      "price_per_pyeong": "1,944만원",
+      "uniqueId": "에코메트로10-117.992㎡-12층-2025.07.03-69500"
+    },
+    {
       "apartment_name": "한라",
       "area": "59.7㎡",
       "floor": "11층",
@@ -217,6 +277,18 @@
       "uniqueId": "인천 소래논현구역 C10블록 에코메트로 3차 더 타워-105.047㎡-29층-2025.06.29-59000"
     },
     {
+      "apartment_name": "논현단풍마을트리플에듀",
+      "area": "84.77㎡",
+      "floor": "19층",
+      "price": "4억 500만원",
+      "price_numeric": 40500,
+      "deal_date": "2025.06.28",
+      "build_year": "2006",
+      "location": "논현동",
+      "price_per_pyeong": "1,577만원",
+      "uniqueId": "논현단풍마을트리플에듀-84.77㎡-19층-2025.06.28-40500"
+    },
+    {
       "apartment_name": "논현유승한내들",
       "area": "56.1574㎡",
       "floor": "22층",
@@ -239,6 +311,18 @@
       "location": "논현동",
       "price_per_pyeong": "982만원",
       "uniqueId": "풍림-85㎡-1층-2025.06.28-25300"
+    },
+    {
+      "apartment_name": "주공2단지",
+      "area": "48.45㎡",
+      "floor": "14층",
+      "price": "2억 500만원",
+      "price_numeric": 20500,
+      "deal_date": "2025.06.27",
+      "build_year": "1998",
+      "location": "논현동",
+      "price_per_pyeong": "1,396만원",
+      "uniqueId": "주공2단지-48.45㎡-14층-2025.06.27-20500"
     },
     {
       "apartment_name": "논현푸르지오 더퍼스트",
@@ -443,6 +527,18 @@
       "location": "논현동",
       "price_per_pyeong": "1,216만원",
       "uniqueId": "풍림-59.7㎡-18층-2025.06.24-22000"
+    },
+    {
+      "apartment_name": "냇마을신영지웰(9단지)",
+      "area": "131.8954㎡",
+      "floor": "20층",
+      "price": "5억 4,100만원",
+      "price_numeric": 54100,
+      "deal_date": "2025.06.23",
+      "build_year": "2007",
+      "location": "논현동",
+      "price_per_pyeong": "1,354만원",
+      "uniqueId": "냇마을신영지웰(9단지)-131.8954㎡-20층-2025.06.23-54100"
     },
     {
       "apartment_name": "에코메트로6",
@@ -2329,6 +2425,6 @@
       "uniqueId": "논현유승한내들-56.1574㎡-33층-2025.05.01-36100"
     }
   ],
-  "timestamp": "2025-07-09T11:51:42.880Z",
-  "date": "2025-07-09"
+  "timestamp": "2025-07-10T12:45:31.235Z",
+  "date": "2025-07-10"
 }

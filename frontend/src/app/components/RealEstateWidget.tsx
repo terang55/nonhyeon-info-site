@@ -253,13 +253,7 @@ export default function RealEstateWidget() {
                 </span>
               )}
             </h3>
-            {yesterdayDate && (
-              <div className={`text-sm ${
-                newTransactionsFromYesterday.length > 0 ? 'text-orange-700' : 'text-gray-600'
-              }`}>
-                기준: {yesterdayDate}
-              </div>
-            )}
+            {/* 날짜 표시는 제거 */}
           </div>
           
           {newTransactionsFromYesterday.length > 0 ? (
