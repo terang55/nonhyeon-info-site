@@ -71,9 +71,6 @@ export const metadata: Metadata = {
       "naver-site-verification": "naver-verification-code", // 네이버 서치어드바이저 코드
     },
   },
-  alternates: {
-    canonical: BASE_URL,
-  },
   category: "지역정보",
 };
 
