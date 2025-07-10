@@ -68,7 +68,6 @@ export default function RealEstateWidget() {
   const [searchTerm, setSearchTerm] = useState('');
   const [highlight, setHighlight] = useState<string | null>(null);
   const [newTransactionsFromYesterday, setNewTransactionsFromYesterday] = useState<Deal[]>([]);
-  const [yesterdayDate, setYesterdayDate] = useState<string | null>(null);
   
   const apartmentRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -123,7 +122,6 @@ export default function RealEstateWidget() {
         
         // 신규 거래 정보 설정
         setNewTransactionsFromYesterday(result.newTransactionsFromYesterday || []);
-        setYesterdayDate(result.yesterdayDate || null);
         
         console.log('✅ 부동산 데이터 로드 완료:', dealsWithIds.length, '건');
       } else {
