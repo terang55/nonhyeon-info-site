@@ -228,9 +228,7 @@ export default function RealEstateWidget() {
           <span>새로고침</span>
         </button>
 
-        <div className="text-sm text-gray-700 leading-relaxed">
-          자동으로 어제와 비교하여 신규 거래를 표시합니다
-        </div>
+        {/* 안내 문구 삭제 */}
       </div>
 
       {/* 어제 대비 신규 거래 섹션 - 항상 표시 */}
@@ -265,7 +263,9 @@ export default function RealEstateWidget() {
           </div>
           
           {newTransactionsFromYesterday.length > 0 ? (
-            <div className={`space-y-2 ${showAllNewYesterday ? 'overflow-visible' : 'max-h-64 overflow-y-auto'}`}>
+            <div
+              className={`${showAllNewYesterday ? 'overflow-visible' : 'max-h-64 overflow-y-auto'} grid grid-cols-2 gap-2`}
+            >
               {newTransactionsFromYesterday.slice(0, showAllNewYesterday ? newTransactionsFromYesterday.length : 5).map((deal, idx) => (
                 <div
                   key={`new-yesterday-${deal.uniqueId || idx}`}
@@ -274,7 +274,7 @@ export default function RealEstateWidget() {
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center space-x-1 sm:space-x-2 mb-1 flex-1 min-w-0">
-                        <span className="font-semibold text-gray-900 text-xs sm:text-sm truncate">
+                        <span className="font-semibold text-gray-900 text-xs sm:text-sm sm:truncate">
                           {deal.apartment_name}
                         </span>
                         <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full font-medium flex-shrink-0">
@@ -382,7 +382,7 @@ export default function RealEstateWidget() {
               >
                 <div className="flex justify-between items-start mb-1">
                   <div className="flex items-center space-x-1 sm:space-x-2 flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 text-xs sm:text-sm truncate">{deal.apartment_name}</h3>
+                    <h3 className="font-semibold text-gray-900 text-xs sm:text-sm sm:truncate">{deal.apartment_name}</h3>
                     {deal.isNew && (
                       <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 animate-bounce flex-shrink-0">
                         NEW
@@ -424,7 +424,7 @@ export default function RealEstateWidget() {
               >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-1 sm:space-x-2 flex-1 min-w-0">
-                    <h4 className="font-semibold text-xs sm:text-sm text-gray-800 truncate">{stat.name}</h4>
+                    <h4 className="font-semibold text-xs sm:text-sm text-gray-800 sm:truncate">{stat.name}</h4>
                     {stat.newCount && stat.newCount > 0 && (
                       <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0">
                         NEW {stat.newCount}
@@ -455,7 +455,7 @@ export default function RealEstateWidget() {
                           }`}>
                             <div className="flex justify-between items-center">
                               <div className="flex items-center space-x-1 flex-1 min-w-0">
-                                <span className="font-medium text-gray-800 text-xs truncate">{deal.area} • {deal.floor}</span>
+                                <span className="font-medium text-gray-800 text-xs sm:truncate">{deal.area} • {deal.floor}</span>
                                 {deal.isNew && (
                                   <span className="inline-flex items-center px-1 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0">
                                     NEW

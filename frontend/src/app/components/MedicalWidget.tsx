@@ -420,7 +420,7 @@ const MedicalWidget: React.FC<MedicalWidgetProps> = ({ initialType = 'all' }) =>
                         <span className="text-xl sm:text-2xl">{getTypeIcon(place.type)}</span>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-base sm:text-lg text-gray-800 truncate">
+                            <h3 className="font-semibold text-base sm:text-lg text-gray-800 sm:truncate">
                               {place.name}
                             </h3>
                             <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full whitespace-nowrap">
