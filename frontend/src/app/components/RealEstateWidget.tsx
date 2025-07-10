@@ -62,6 +62,8 @@ export default function RealEstateWidget() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAllDeals, setShowAllDeals] = useState(false);
+  // 어제 대비 신규 거래 전체보기 토글 상태
+  const [showAllNewYesterday, setShowAllNewYesterday] = useState(false);
   const [expandedApartment, setExpandedApartment] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [highlight, setHighlight] = useState<string | null>(null);
@@ -263,8 +265,8 @@ export default function RealEstateWidget() {
           </div>
           
           {newTransactionsFromYesterday.length > 0 ? (
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {newTransactionsFromYesterday.slice(0, 5).map((deal, idx) => (
+            <div className={`space-y-2 ${showAllNewYesterday ? 'overflow-visible' : 'max-h-64 overflow-y-auto'}`}>
+              {newTransactionsFromYesterday.slice(0, showAllNewYesterday ? newTransactionsFromYesterday.length : 5).map((deal, idx) => (
                 <div
                   key={`new-yesterday-${deal.uniqueId || idx}`}
                   className="bg-white border border-orange-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow"
@@ -293,8 +295,15 @@ export default function RealEstateWidget() {
               ))}
               
               {newTransactionsFromYesterday.length > 5 && (
-                <div className="text-center text-sm text-orange-700 pt-2">
-                  외 {newTransactionsFromYesterday.length - 5}건 더...
+                <div className="text-center pt-2">
+                  <button
+                    onClick={() => setShowAllNewYesterday(!showAllNewYesterday)}
+                    className="text-sm text-orange-700 hover:text-orange-900 transition-colors px-3 py-2 min-h-[36px]"
+                  >
+                    {showAllNewYesterday
+                      ? '접기'
+                      : `더보기 (${newTransactionsFromYesterday.length - 5}건)`}
+                  </button>
                 </div>
               )}
             </div>
