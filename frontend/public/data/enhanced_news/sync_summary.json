@@ -1,7 +1,7 @@
 {
-  "sync_time": "2025-07-09T22:11:22.524679",
+  "sync_time": "2025-07-10T21:44:43.005716",
   "total_files": 1,
-  "total_keywords": 10,
+  "total_keywords": 11,
   "keywords": [
     "소래포구",
     "에코메트로",
@@ -11,6 +11,7 @@
     "인천논현",
     "인천논현 맛집",
     "인천논현 아파트",
+    "인천논현 추천",
     "인천논현 카페",
     "호구포"
   ],
@@ -18,7 +19,7 @@
     "all_platforms"
   ],
   "files": {
-    "all_platforms": "all_platforms_enhanced_news_20250709_221115.json"
+    "all_platforms": "all_platforms_enhanced_news_20250710_214435.json"
   },
   "sync_type": "latest_only"
 }
