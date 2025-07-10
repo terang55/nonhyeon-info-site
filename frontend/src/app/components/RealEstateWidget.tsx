@@ -264,7 +264,7 @@ export default function RealEstateWidget() {
           
           {newTransactionsFromYesterday.length > 0 ? (
             <div
-              className={`${showAllNewYesterday ? 'overflow-visible' : 'max-h-64 overflow-y-auto'} grid grid-cols-2 gap-2`}
+              className={`${showAllNewYesterday ? 'overflow-visible' : 'max-h-64 overflow-y-auto'} grid grid-cols-1 sm:grid-cols-2 gap-2`}
             >
               {newTransactionsFromYesterday.slice(0, showAllNewYesterday ? newTransactionsFromYesterday.length : 5).map((deal, idx) => (
                 <div
