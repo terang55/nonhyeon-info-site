@@ -153,11 +153,7 @@ jobs:
         echo "💾 커밋 메시지: $COMMIT_MSG"
         
         # 커밋 실행
-        git commit -m "$COMMIT_MSG
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
+        git commit -m "$COMMIT_MSG" -m "🤖 Generated with [Claude Code](https://claude.ai/code)" -m "Co-Authored-By: Claude <noreply@anthropic.com>"
         
         # 푸시 실행
         echo "🔼 변경사항을 GitHub에 푸시 중..."
