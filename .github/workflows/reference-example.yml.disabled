@@ -1,0 +1,124 @@
+# 이전 프로젝트에서 사용했던 크롤링 자동화 예시
+# 파일명에 .disabled를 붙여서 실행되지 않도록 설정
+
+name: 📰 뉴스 자동 수집 시스템 (참고용)
+
+# 이전 프로젝트에서 사용했던 설정
+on:
+  schedule:
+    # 매 3시간마다 실행 (더 자주 실행했던 경우)
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+jobs:
+  news-crawler:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.PAT_TOKEN }}  # Personal Access Token 사용했던 경우
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    # 이전 프로젝트에서는 캐시를 더 적극적으로 활용
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    # Chrome 설치 (이전 방식)
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+    
+    # 이전 프로젝트에서 사용했던 환경변수 설정 방식
+    - name: Setup Environment
+      run: |
+        echo "CRAWL_TARGET=news" >> $GITHUB_ENV
+        echo "DATA_PATH=./data" >> $GITHUB_ENV
+        echo "LOG_LEVEL=INFO" >> $GITHUB_ENV
+    
+    # 의존성 설치 (이전 방식)
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium beautifulsoup4 requests pandas
+        pip install webdriver-manager  # Chrome driver 자동 관리
+    
+    # 이전 프로젝트에서는 실행 전 검증을 더 엄격하게 함
+    - name: Validate Environment
+      run: |
+        python --version
+        google-chrome --version
+        pip list | grep selenium
+    
+    # 크롤링 실행 (이전 프로젝트 방식)
+    - name: Run Crawler
+      id: crawl
+      run: |
+        python crawler/main.py --mode=auto --verbose
+        
+        # 결과 검증
+        RESULT_COUNT=$(find data/ -name "*.json" | wc -l)
+        echo "result_count=$RESULT_COUNT" >> $GITHUB_OUTPUT
+        
+        if [ $RESULT_COUNT -eq 0 ]; then
+          echo "No data collected, marking as failed"
+          exit 1
+        fi
+    
+    # 이전 프로젝트에서 사용했던 알림 시스템
+    - name: Notify Success
+      if: success()
+      run: |
+        echo "✅ 크롤링 성공: ${{ steps.crawl.outputs.result_count }}개 파일 수집"
+        # 슬랙 알림이나 이메일 등을 보내는 로직이 있었음
+    
+    # 실패 시 알림 (이전 프로젝트에서 중요하게 관리했던 부분)
+    - name: Notify Failure
+      if: failure()
+      run: |
+        echo "❌ 크롤링 실패 - 관리자 확인 필요"
+        # 실패 시 슬랙이나 이메일 알림 발송
+    
+    # 이전 프로젝트에서는 데이터 압축도 함
+    - name: Archive Data
+      if: success()
+      run: |
+        tar -czf "news-data-$(date +%Y%m%d).tar.gz" data/
+    
+    # Git 커밋 (이전 방식 - 더 상세한 메시지)
+    - name: Commit Changes
+      if: success()
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        git add .
+        git diff --staged --quiet || git commit -m "
+        📰 자동 뉴스 수집: $(date '+%Y-%m-%d %H:%M:%S')
+        
+        📊 수집 현황:
+        - 파일 수: ${{ steps.crawl.outputs.result_count }}개
+        - 실행 시간: $(date '+%Y-%m-%d %H:%M:%S')
+        - 워크플로우: ${{ github.workflow }}
+        
+        🤖 자동 수집 시스템"
+        
+        git push
+
+# 이전 프로젝트에서 배운 베스트 프랙티스들:
+# 1. 환경변수로 설정 관리
+# 2. 단계별 검증 강화
+# 3. 실패 시 명확한 로깅
+# 4. 결과 데이터 검증
+# 5. 상세한 커밋 메시지
+# 6. 알림 시스템 통합

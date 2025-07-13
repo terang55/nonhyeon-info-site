@@ -1,0 +1,132 @@
+name: 🔧 크롤링 복구 및 백업
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: '수행할 작업'
+        required: true
+        type: choice
+        options:
+        - backup_data
+        - force_crawl
+        - clean_duplicates
+        - sync_only
+      backup_days:
+        description: '백업할 일수 (backup_data 선택시)'
+        required: false
+        default: '7'
+        type: string
+
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    
+    steps:
+    - name: 📥 코드 체크아웃
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 전체 히스토리 가져오기 (백업용)
+    
+    - name: 🐍 Python 설정
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: 📦 Chrome 설치
+      uses: browser-actions/setup-chrome@v1
+      if: github.event.inputs.action == 'force_crawl'
+    
+    - name: 📚 의존성 설치
+      run: |
+        cd crawler
+        pip install -r requirements.txt
+    
+    - name: 💾 데이터 백업
+      if: github.event.inputs.action == 'backup_data'
+      run: |
+        echo "💾 데이터 백업 시작..."
+        BACKUP_DATE=$(date '+%Y%m%d_%H%M%S')
+        
+        # 기존 데이터 아카이브
+        tar -czf "backup_${BACKUP_DATE}.tar.gz" data/enhanced_news/ frontend/public/data/enhanced_news/
+        
+        # GitHub Artifacts로 업로드하기 위해 준비
+        mkdir -p backup
+        mv "backup_${BACKUP_DATE}.tar.gz" backup/
+        
+        echo "✅ 백업 완료: backup_${BACKUP_DATE}.tar.gz"
+    
+    - name: 🔄 강제 크롤링
+      if: github.event.inputs.action == 'force_crawl'
+      run: |
+        cd crawler
+        echo "🔄 강제 크롤링 시작..."
+        
+        # 기존 데이터 임시 백업
+        mv ../data/enhanced_news ../data/enhanced_news_backup_$(date +%H%M%S) || true
+        mkdir -p ../data/enhanced_news
+        
+        # 크롤링 실행
+        python run_platform_keywords_crawler.py
+        
+        echo "✅ 강제 크롤링 완료"
+    
+    - name: 🧹 중복 데이터 정리
+      if: github.event.inputs.action == 'clean_duplicates'
+      run: |
+        cd crawler
+        echo "🧹 중복 데이터 정리 시작..."
+        
+        python remove_duplicates.py
+        
+        echo "✅ 중복 정리 완료"
+    
+    - name: 🔄 동기화만 실행
+      if: github.event.inputs.action == 'sync_only'
+      run: |
+        cd crawler
+        echo "🔄 프론트엔드 동기화만 실행..."
+        
+        python sync_to_frontend.py --sync
+        
+        echo "✅ 동기화 완료"
+    
+    - name: 📤 백업 파일 업로드
+      if: github.event.inputs.action == 'backup_data'
+      uses: actions/upload-artifact@v4
+      with:
+        name: nonhyeon-data-backup-${{ github.run_number }}
+        path: backup/
+        retention-days: 30
+    
+    - name: 💾 변경사항 커밋
+      if: github.event.inputs.action != 'backup_data'
+      run: |
+        git config user.name "논현봇"
+        git config user.email "actions@github.com"
+        
+        git add .
+        
+        if ! git diff --cached --quiet; then
+          CURRENT_TIME=$(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S')
+          git commit -m "🔧 복구 작업: ${{ github.event.inputs.action }} - $CURRENT_TIME"
+          git push origin main
+          echo "✅ 복구 작업 완료 및 푸시됨"
+        else
+          echo "ℹ️ 변경사항 없음"
+        fi
+    
+    - name: 📊 작업 결과 요약
+      if: always()
+      run: |
+        echo "🔧 ================================="
+        echo "📊 복구 작업 실행 결과"
+        echo "🔧 ================================="
+        echo "⏰ 완료 시간: $(TZ=Asia/Seoul date)"
+        echo "🎯 수행 작업: ${{ github.event.inputs.action }}"
+        echo "📁 현재 데이터 파일 수:"
+        find data/enhanced_news/ -name "*.json" | wc -l || echo "0"
+        echo "🔧 ================================="

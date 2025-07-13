@@ -1,0 +1,82 @@
+name: 🎯 수동 크롤링 (빠른 실행)
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: '크롤링할 플랫폼'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - news
+        - blog
+        - youtube
+      test_mode:
+        description: '테스트 모드 (커밋하지 않음)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  quick-crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+    - name: 📥 코드 체크아웃
+      uses: actions/checkout@v4
+    
+    - name: 🐍 Python 3.11 설정
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: 📦 Chrome 설치
+      uses: browser-actions/setup-chrome@v1
+    
+    - name: 📚 의존성 설치
+      run: |
+        cd crawler
+        pip install -r requirements.txt
+    
+    - name: 🎯 선택적 크롤링 실행
+      run: |
+        cd crawler
+        echo "🚀 ${{ github.event.inputs.platform }} 플랫폼 크롤링 시작..."
+        
+        # 플랫폼별 선택적 실행 (추후 구현 가능)
+        python run_platform_keywords_crawler.py
+    
+    - name: 🔄 동기화 (테스트 모드가 아닐 때만)
+      if: github.event.inputs.test_mode == 'false'
+      run: |
+        cd crawler
+        python sync_to_frontend.py --sync
+    
+    - name: 💾 커밋 & 푸시 (테스트 모드가 아닐 때만)
+      if: github.event.inputs.test_mode == 'false'
+      run: |
+        git config user.name "논현봇"
+        git config user.email "actions@github.com"
+        
+        git add data/enhanced_news/ frontend/public/data/enhanced_news/
+        
+        if ! git diff --cached --quiet; then
+          CURRENT_TIME=$(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S')
+          git commit -m "🎯 수동 크롤링: ${{ github.event.inputs.platform }} - $CURRENT_TIME"
+          git push origin main
+          echo "✅ 수동 크롤링 완료 및 푸시됨"
+        else
+          echo "ℹ️ 변경사항 없음"
+        fi
+    
+    - name: 📋 테스트 결과 (테스트 모드일 때만)
+      if: github.event.inputs.test_mode == 'true'
+      run: |
+        echo "🧪 테스트 모드 실행 완료"
+        echo "📊 수집된 파일 수:"
+        find data/enhanced_news/ -name "*_enhanced_news_*.json" | wc -l
+        echo "💡 실제 커밋은 수행되지 않았습니다."

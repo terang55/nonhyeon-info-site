@@ -1,0 +1,186 @@
+name: 🤖 논현동 뉴스 자동 크롤링
+
+on:
+  # 매일 05:00, 13:00, 18:00 (KST) 자동 실행 = UTC 20:00, 04:00, 09:00
+  schedule:
+    - cron: '0 20 * * *'  # 매일 05:00 KST (오전)
+    - cron: '0 4 * * *'   # 매일 13:00 KST (오후)
+    - cron: '0 9 * * *'   # 매일 18:00 KST (저녁)
+  
+  # 수동 실행 가능
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: '크롤링할 플랫폼 (news,blog,youtube 또는 all)'
+        required: false
+        default: 'all'
+        type: string
+      force_push:
+        description: '변경사항이 없어도 강제 커밋'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  TIMEZONE: Asia/Seoul
+
+jobs:
+  crawl-and-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+    - name: 📥 코드 체크아웃
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+    
+    - name: 🐍 Python 3.11 설정
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: 📦 Chrome 브라우저 설치 (Selenium용)
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: stable
+    
+    - name: 🔧 시스템 의존성 설치
+      run: |
+        # Chrome WebDriver 자동 설치를 위한 설정
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
+        
+        # 한국 시간대 설정
+        sudo timedatectl set-timezone Asia/Seoul
+    
+    - name: 📚 Python 의존성 설치
+      run: |
+        cd crawler
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        
+        # 추가 필요한 패키지 (GitHub Actions 환경용)
+        pip install webdriver-manager selenium beautifulsoup4 requests pandas loguru ujson python-dateutil schedule
+    
+    - name: 🕒 실행 시간 출력 (디버깅용)
+      run: |
+        echo "🕒 현재 시간 (UTC): $(date -u)"
+        echo "🕒 현재 시간 (KST): $(TZ=Asia/Seoul date)"
+        echo "🎯 크롤링 플랫폼: ${{ github.event.inputs.platforms || 'all' }}"
+    
+    - name: 🎯 뉴스/블로그/유튜브 크롤링 실행
+      id: crawling
+      run: |
+        cd crawler
+        
+        # 환경 변수 설정
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        export TZ=Asia/Seoul
+        
+        echo "🚀 논현동 정보 크롤링 시작..."
+        echo "📅 실행 시간: $(date)"
+        
+        # Python 크롤링 실행 (기존 로직과 동일)
+        python run_platform_keywords_crawler.py
+        
+        # 크롤링 결과 확인
+        if [ $? -eq 0 ]; then
+          echo "✅ 크롤링 완료"
+          echo "crawling_success=true" >> $GITHUB_OUTPUT
+        else
+          echo "❌ 크롤링 실패"
+          echo "crawling_success=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+        
+        # 수집된 파일 수 확인
+        NEWS_COUNT=$(find ../data/enhanced_news/ -name "*_enhanced_news_*.json" | wc -l)
+        echo "📊 수집된 파일 수: $NEWS_COUNT"
+        echo "news_count=$NEWS_COUNT" >> $GITHUB_OUTPUT
+    
+    - name: 🔄 프론트엔드 데이터 동기화
+      id: sync
+      if: steps.crawling.outputs.crawling_success == 'true'
+      run: |
+        cd crawler
+        
+        echo "🔄 프론트엔드 동기화 시작..."
+        python sync_to_frontend.py --sync
+        
+        if [ $? -eq 0 ]; then
+          echo "✅ 동기화 완료"
+          echo "sync_success=true" >> $GITHUB_OUTPUT
+        else
+          echo "❌ 동기화 실패"
+          echo "sync_success=false" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: 📊 변경사항 확인
+      id: changes
+      if: steps.sync.outputs.sync_success == 'true'
+      run: |
+        # Git 상태 확인
+        git config user.name "논현봇"
+        git config user.email "actions@github.com"
+        
+        # 변경된 파일 확인
+        git add data/enhanced_news/ frontend/public/data/enhanced_news/
+        
+        # 변경사항이 있는지 확인
+        if git diff --cached --quiet; then
+          echo "ℹ️ 변경사항 없음"
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "📝 변경사항 감지됨"
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          
+          # 변경된 파일 목록 출력
+          echo "📋 변경된 파일들:"
+          git diff --cached --name-only
+        fi
+    
+    - name: 🚀 변경사항 커밋 및 푸시
+      if: steps.changes.outputs.has_changes == 'true' || github.event.inputs.force_push == 'true'
+      run: |
+        # 커밋 메시지 생성 (기존 배치 파일과 동일한 형식)
+        CURRENT_TIME=$(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S')
+        COMMIT_MSG="🗃️ 데이터 자동 동기화: $CURRENT_TIME"
+        
+        echo "💾 커밋 메시지: $COMMIT_MSG"
+        
+        # 커밋 실행
+        git commit -m "$COMMIT_MSG
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+        
+        # 푸시 실행
+        echo "🔼 변경사항을 GitHub에 푸시 중..."
+        git push origin main
+        
+        echo "✅ GitHub 푸시 완료!"
+    
+    - name: 📈 실행 결과 요약
+      if: always()
+      run: |
+        echo "🎯 ==================================="
+        echo "📊 논현동 뉴스 크롤링 실행 결과"
+        echo "🎯 ==================================="
+        echo "⏰ 완료 시간: $(TZ=Asia/Seoul date)"
+        echo "🎲 크롤링 성공: ${{ steps.crawling.outputs.crawling_success }}"
+        echo "🔄 동기화 성공: ${{ steps.sync.outputs.sync_success }}"
+        echo "📝 변경사항: ${{ steps.changes.outputs.has_changes }}"
+        echo "📊 수집 파일 수: ${{ steps.crawling.outputs.news_count }}"
+        echo "🎯 ==================================="
+    
+    - name: ❌ 실패 시 알림
+      if: failure()
+      run: |
+        echo "🚨 크롤링 작업이 실패했습니다!"
+        echo "📅 실패 시간: $(TZ=Asia/Seoul date)"
+        echo "🔍 로그를 확인하여 문제를 파악하세요."
