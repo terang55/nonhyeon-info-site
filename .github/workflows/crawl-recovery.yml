@@ -22,6 +22,9 @@ jobs:
   recovery:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: write
+      actions: read
     
     steps:
     - name: 📥 코드 체크아웃
