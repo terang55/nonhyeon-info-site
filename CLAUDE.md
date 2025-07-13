@@ -35,8 +35,13 @@ npm install          # Install dependencies
 npm run dev          # Start development server (uses --turbopack)
 npm run build        # Build for production
 npm run start        # Start production server
-npm run lint         # Run ESLint
+npm run lint         # Run ESLint (no test command - testing not configured)
 ```
+
+### Testing Status
+- **No testing framework configured**: The project currently has no Jest, Vitest, or other testing setup
+- Manual testing only through browser verification and debugging scripts
+- Crawler has manual test scripts (`test_*.py`) for debugging, not automated tests
 
 ### Python Crawler Development
 ```bash
@@ -122,13 +127,19 @@ The crawler uses intelligent duplicate detection:
 ### Code Style
 - All code comments and responses in Korean
 - Strict TypeScript (no `any` types)
-- Tailwind CSS only (no inline styles)
+- Tailwind CSS only (no inline styles)  
 - Mobile-first responsive design
+- No hardcoded URLs or keywords
+- No console.log in production
+- Meaningful variable and function names
 
-### Git Workflow
-- User must explicitly approve all git operations
-- Commit messages use Korean with emoji prefixes (🚀, 🔧, 📝, 🎨, etc.)
-- Test locally before committing
+### Git Workflow - CRITICAL RULES
+- **사용자 권한**: AI는 절대로 사용자 허락 없이 git 작업을 수행하지 않음
+- **로컬 실행**: 모든 로컬 실행(`npm run dev`, `npm run build` 등)은 사용자가 직접 수행
+- **커밋 승인**: `git add`, `git commit`, `git push` 등 모든 git 작업 전에 반드시 사용자 허락 필요
+- Commit messages use Korean with emoji prefixes:
+  - 🚀 기능 추가, 🔧 버그 수정, 📝 문서 업데이트, 🎨 UI/UX 개선
+  - ⚡ 성능 최적화, 🔍 SEO 최적화, 🗃️ 데이터베이스 관련, 🧹 코드 정리
 
 ### Security
 - API keys in environment variables
@@ -162,3 +173,18 @@ The crawler uses intelligent duplicate detection:
 - Kakao API for location services
 - YouTube thumbnails for video content
 - Naver search for news and blog content
+
+## Key Project Context
+
+### Target Area & Keywords
+- **Location**: 인천 남동구 논현동 (Nonhyeon-dong, Namdong-gu, Incheon)
+- **Primary Keywords**: 논현동, 에코메트로, 소래포구, 호구포
+- **Target Users**: 논현동 주민 및 관심있는 사람들
+- **Goal**: 지역 정보 허브로서의 신뢰성 확보 및 AdSense 수익화
+
+### Development Workflow
+1. **AI Code Modification**: AI performs code changes and file creation/editing
+2. **User Local Testing**: User manually runs `npm run dev`, `npm run build` for verification
+3. **User Review**: User reviews and approves all changes
+4. **User Git Operations**: Only after user approval, AI can perform git operations
+5. **Auto Deployment**: Vercel automatically deploys on git push

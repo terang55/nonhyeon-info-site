@@ -1,7 +1,7 @@
 {
-  "total_items": 86,
-  "total_before_dedup": 86,
-  "duplicates_removed": 0,
+  "total_items": 88,
+  "total_before_dedup": 89,
+  "duplicates_removed": 1,
   "platform_breakdown": {
     "news": {
       "keywords": [
@@ -25,9 +25,10 @@
         "호구포",
         "인천논현 아파트",
         "인천논현 카페",
+        "인천논현 추천",
         "인천논현 맛집"
       ],
-      "items": 48
+      "items": 51
     },
     "youtube": {
       "keywords": [
@@ -43,6 +44,6 @@
       "items": 0
     }
   },
-  "crawl_time": "2025-07-05T11:17:48.595143",
-  "summary": "86개 유니크 항목이 플랫폼별 키워드로 수집됨"
+  "crawl_time": "2025-07-11T21:02:58.047315",
+  "summary": "88개 유니크 항목이 플랫폼별 키워드로 수집됨"
 }

@@ -96,6 +96,10 @@ CHROME_OPTIONS = [
     "--disable-extensions",
     "--disable-plugins",
     "--disable-images",
+    "--headless",
+    "--disable-gpu",
+    "--remote-debugging-port=9222",
+    "--user-data-dir=/tmp/chrome-user-data",
     "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 ]
 
