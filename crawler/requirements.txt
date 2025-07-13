@@ -20,8 +20,5 @@ loguru==0.7.0
 # JSON 처리
 ujson==5.8.0
 
-# 데이터베이스 (선택사항)
-sqlite3
-
 # 날짜/시간 처리
 python-dateutil==2.8.2 

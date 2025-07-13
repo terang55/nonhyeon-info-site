@@ -42,7 +42,9 @@ jobs:
     - name: 📚 의존성 설치
       run: |
         cd crawler
+        pip install --upgrade pip
         pip install -r requirements.txt
+        pip install webdriver-manager
     
     - name: 💾 데이터 백업
       if: github.event.inputs.action == 'backup_data'

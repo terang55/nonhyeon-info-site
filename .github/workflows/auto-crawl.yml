@@ -62,8 +62,8 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
         
-        # 추가 필요한 패키지 (GitHub Actions 환경용)
-        pip install webdriver-manager selenium beautifulsoup4 requests pandas loguru ujson python-dateutil schedule
+        # 추가 필요한 패키지 (GitHub Actions 환경용 - 최신 버전)
+        pip install webdriver-manager
     
     - name: 🕒 실행 시간 출력 (디버깅용)
       run: |
