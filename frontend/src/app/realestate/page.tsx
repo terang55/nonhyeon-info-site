@@ -1,11 +1,10 @@
-import React from 'react';
 import Link from 'next/link';
-import RealEstateWidget from '../components/RealEstateWidget';
-import Head from 'next/head';
 import type { Metadata } from 'next';
 import { BASE_URL } from '@/lib/siteConfig';
 import Footer from '../components/Footer';
 import { generateBreadcrumbSchema } from '@/lib/seo';
+import RealEstateClientPage from './RealEstateClientPage';
+import Head from 'next/head';
 
 export const metadata: Metadata = {
   title: '인천논현동 부동산 실거래가 | 에코메트로·논현센트럴뷰 아파트 시세 | 인천논현라이프',
@@ -151,7 +150,7 @@ export default function RealEstatePage() {
 
         {/* 부동산 위젯 (전체 너비로 확장) */}
         <div className="bg-white rounded-xl shadow-sm border p-6">
-          <RealEstateWidget />
+          <RealEstateClientPage />
         </div>
 
         {/* 추가 정보 섹션 */}
@@ -316,4 +315,4 @@ export default function RealEstatePage() {
       <Footer variant="dark" />
     </div>
   );
-} 
+}
