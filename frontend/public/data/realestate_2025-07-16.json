@@ -1,6 +1,126 @@
 {
   "deals": [
     {
+      "apartment_name": "주공13단지(푸르내마을)",
+      "area": "59.71㎡",
+      "floor": "17층",
+      "price": "2억 9,800만원",
+      "price_numeric": 29800,
+      "deal_date": "2025-07-12",
+      "build_year": 2006,
+      "location": "논현동",
+      "price_per_pyeong": "1,647만원",
+      "unique_id": "주공13단지(푸르내마을)_59.71㎡_17층_2025-07-12_29800"
+    },
+    {
+      "apartment_name": "풍림",
+      "area": "85㎡",
+      "floor": "20층",
+      "price": "2억 7,900만원",
+      "price_numeric": 27900,
+      "deal_date": "2025-07-10",
+      "build_year": 2000,
+      "location": "논현동",
+      "price_per_pyeong": "1,083만원",
+      "unique_id": "풍림_85㎡_20층_2025-07-10_27900"
+    },
+    {
+      "apartment_name": "논현단풍마을트리플에듀",
+      "area": "84.55㎡",
+      "floor": "16층",
+      "price": "4억 2,000만원",
+      "price_numeric": 42000,
+      "deal_date": "2025-07-15",
+      "build_year": 2006,
+      "location": "논현동",
+      "price_per_pyeong": "1,639만원",
+      "unique_id": "논현단풍마을트리플에듀_84.55㎡_16층_2025-07-15_42000"
+    },
+    {
+      "apartment_name": "논현푸르지오 더퍼스트",
+      "area": "61.8717㎡",
+      "floor": "15층",
+      "price": "4억원",
+      "price_numeric": 40000,
+      "deal_date": "2025-07-05",
+      "build_year": 2019,
+      "location": "논현동",
+      "price_per_pyeong": "2,133만원",
+      "unique_id": "논현푸르지오 더퍼스트_61.8717㎡_15층_2025-07-05_40000"
+    },
+    {
+      "apartment_name": "풍림",
+      "area": "124.725㎡",
+      "floor": "4층",
+      "price": "4억 2,800만원",
+      "price_numeric": 42800,
+      "deal_date": "2025-07-12",
+      "build_year": 2000,
+      "location": "논현동",
+      "price_per_pyeong": "1,132만원",
+      "unique_id": "풍림_124.725㎡_4층_2025-07-12_42800"
+    },
+    {
+      "apartment_name": "휴먼시아동산마을",
+      "area": "84.6㎡",
+      "floor": "1층",
+      "price": "3억 6,500만원",
+      "price_numeric": 36500,
+      "deal_date": "2025-07-12",
+      "build_year": 2006,
+      "location": "논현동",
+      "price_per_pyeong": "1,424만원",
+      "unique_id": "휴먼시아동산마을_84.6㎡_1층_2025-07-12_36500"
+    },
+    {
+      "apartment_name": "에코메트로5",
+      "area": "84.986㎡",
+      "floor": "16층",
+      "price": "5억 6,400만원",
+      "price_numeric": 56400,
+      "deal_date": "2025-07-12",
+      "build_year": 2010,
+      "location": "논현동",
+      "price_per_pyeong": "2,190만원",
+      "unique_id": "에코메트로5_84.986㎡_16층_2025-07-12_56400"
+    },
+    {
+      "apartment_name": "주공1단지",
+      "area": "59.13㎡",
+      "floor": "6층",
+      "price": "2억 2,800만원",
+      "price_numeric": 22800,
+      "deal_date": "2025-07-10",
+      "build_year": 1998,
+      "location": "논현동",
+      "price_per_pyeong": "1,272만원",
+      "unique_id": "주공1단지_59.13㎡_6층_2025-07-10_22800"
+    },
+    {
+      "apartment_name": "주공13단지(푸르내마을)",
+      "area": "59.57㎡",
+      "floor": "15층",
+      "price": "3억 900만원",
+      "price_numeric": 30900,
+      "deal_date": "2025-07-05",
+      "build_year": 2006,
+      "location": "논현동",
+      "price_per_pyeong": "1,712만원",
+      "unique_id": "주공13단지(푸르내마을)_59.57㎡_15층_2025-07-05_30900"
+    },
+    {
+      "apartment_name": "논현유승한내들",
+      "area": "56.1574㎡",
+      "floor": "8층",
+      "price": "3억 2,000만원",
+      "price_numeric": 32000,
+      "deal_date": "2025-07-11",
+      "build_year": 2018,
+      "location": "논현동",
+      "price_per_pyeong": "1,880만원",
+      "unique_id": "논현유승한내들_56.1574㎡_8층_2025-07-11_32000"
+    },
+    {
       "apartment_name": "주공2단지",
       "area": "48.45㎡",
       "floor": "1층",
@@ -35,6 +155,18 @@
       "location": "논현동",
       "price_per_pyeong": "1,657만원",
       "unique_id": "에코메트로11_101.991㎡_12층_2025-07-02_51200"
+    },
+    {
+      "apartment_name": "냇마을신영지웰(9단지)",
+      "area": "152.5702㎡",
+      "floor": "20층",
+      "price": "6억 1,500만원",
+      "price_numeric": 61500,
+      "deal_date": "2025-07-09",
+      "build_year": 2007,
+      "location": "논현동",
+      "price_per_pyeong": "1,330만원",
+      "unique_id": "냇마을신영지웰(9단지)_152.5702㎡_20층_2025-07-09_61500"
     },
     {
       "apartment_name": "에코메트로6",
@@ -2521,9 +2653,9 @@
       "unique_id": "주공13단지(푸르내마을)_51.86㎡_10층_2025-05-07_25000"
     }
   ],
-  "timestamp": "2025-07-15T13:12:24.025Z",
-  "total_count": 215,
-  "date": "2025-07-14",
+  "timestamp": "2025-07-15T21:19:49.582Z",
+  "total_count": 221,
+  "date": "2025-07-16",
   "collection_method": "github_actions_auto",
-  "note": "2025-07-14 시점에서 수집된 최근 3개월 전체 거래 데이터"
+  "note": "2025-07-16 시점에서 수집된 최근 3개월 전체 거래 데이터"
 }
