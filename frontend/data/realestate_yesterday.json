@@ -1,6 +1,78 @@
 {
   "deals": [
     {
+      "apartment_name": "휴먼시아동산마을",
+      "area": "84.6㎡",
+      "floor": "1층",
+      "price": "3억 6,500만원",
+      "price_numeric": 36500,
+      "deal_date": "2025.07.12",
+      "build_year": "2006",
+      "location": "논현동",
+      "price_per_pyeong": "1,424만원",
+      "uniqueId": "휴먼시아동산마을-84.6㎡-1층-2025.07.12-36500"
+    },
+    {
+      "apartment_name": "에코메트로5",
+      "area": "84.986㎡",
+      "floor": "16층",
+      "price": "5억 6,400만원",
+      "price_numeric": 56400,
+      "deal_date": "2025.07.12",
+      "build_year": "2010",
+      "location": "논현동",
+      "price_per_pyeong": "2,190만원",
+      "uniqueId": "에코메트로5-84.986㎡-16층-2025.07.12-56400"
+    },
+    {
+      "apartment_name": "논현유승한내들",
+      "area": "56.1574㎡",
+      "floor": "8층",
+      "price": "3억 2,000만원",
+      "price_numeric": 32000,
+      "deal_date": "2025.07.11",
+      "build_year": "2018",
+      "location": "논현동",
+      "price_per_pyeong": "1,880만원",
+      "uniqueId": "논현유승한내들-56.1574㎡-8층-2025.07.11-32000"
+    },
+    {
+      "apartment_name": "주공1단지",
+      "area": "59.13㎡",
+      "floor": "6층",
+      "price": "2억 2,800만원",
+      "price_numeric": 22800,
+      "deal_date": "2025.07.10",
+      "build_year": "1998",
+      "location": "논현동",
+      "price_per_pyeong": "1,272만원",
+      "uniqueId": "주공1단지-59.13㎡-6층-2025.07.10-22800"
+    },
+    {
+      "apartment_name": "풍림",
+      "area": "59.7㎡",
+      "floor": "15층",
+      "price": "2억 5,000만원",
+      "price_numeric": 25000,
+      "deal_date": "2025.07.10",
+      "build_year": "2000",
+      "location": "논현동",
+      "price_per_pyeong": "1,382만원",
+      "uniqueId": "풍림-59.7㎡-15층-2025.07.10-25000"
+    },
+    {
+      "apartment_name": "에코메트로6",
+      "area": "84.947㎡",
+      "floor": "25층",
+      "price": "5억 2,500만원",
+      "price_numeric": 52500,
+      "deal_date": "2025.07.09",
+      "build_year": "2010",
+      "location": "논현동",
+      "price_per_pyeong": "2,040만원",
+      "uniqueId": "에코메트로6-84.947㎡-25층-2025.07.09-52500"
+    },
+    {
       "apartment_name": "냇마을신영지웰(9단지)",
       "area": "96.5212㎡",
       "floor": "20층",
@@ -11,6 +83,18 @@
       "location": "논현동",
       "price_per_pyeong": "1,795만원",
       "uniqueId": "냇마을신영지웰(9단지)-96.5212㎡-20층-2025.07.09-52500"
+    },
+    {
+      "apartment_name": "주공1단지",
+      "area": "59.13㎡",
+      "floor": "7층",
+      "price": "2억 2,000만원",
+      "price_numeric": 22000,
+      "deal_date": "2025.07.09",
+      "build_year": "1998",
+      "location": "논현동",
+      "price_per_pyeong": "1,228만원",
+      "uniqueId": "주공1단지-59.13㎡-7층-2025.07.09-22000"
     },
     {
       "apartment_name": "논현신일해피트리",
@@ -85,6 +169,30 @@
       "uniqueId": "논현단풍마을트리플에듀-84.55㎡-7층-2025.07.07-36500"
     },
     {
+      "apartment_name": "논현푸르지오 더퍼스트",
+      "area": "61.8717㎡",
+      "floor": "15층",
+      "price": "4억원",
+      "price_numeric": 40000,
+      "deal_date": "2025.07.05",
+      "build_year": "2019",
+      "location": "논현동",
+      "price_per_pyeong": "2,133만원",
+      "uniqueId": "논현푸르지오 더퍼스트-61.8717㎡-15층-2025.07.05-40000"
+    },
+    {
+      "apartment_name": "주공13단지(푸르내마을)",
+      "area": "59.57㎡",
+      "floor": "15층",
+      "price": "3억 900만원",
+      "price_numeric": 30900,
+      "deal_date": "2025.07.05",
+      "build_year": "2006",
+      "location": "논현동",
+      "price_per_pyeong": "1,712만원",
+      "uniqueId": "주공13단지(푸르내마을)-59.57㎡-15층-2025.07.05-30900"
+    },
+    {
       "apartment_name": "에코메트로11",
       "area": "84.997㎡",
       "floor": "14층",
@@ -131,6 +239,18 @@
       "location": "논현동",
       "price_per_pyeong": "1,440만원",
       "uniqueId": "논현단풍마을트리플에듀-84.79㎡-20층-2025.07.05-37000"
+    },
+    {
+      "apartment_name": "주공2단지",
+      "area": "48.45㎡",
+      "floor": "1층",
+      "price": "1억 7,500만원",
+      "price_numeric": 17500,
+      "deal_date": "2025.07.04",
+      "build_year": "1998",
+      "location": "논현동",
+      "price_per_pyeong": "1,192만원",
+      "uniqueId": "주공2단지-48.45㎡-1층-2025.07.04-17500"
     },
     {
       "apartment_name": "별빛마을웰카운티(10단지)",
@@ -191,6 +311,18 @@
       "location": "논현동",
       "price_per_pyeong": "1,050만원",
       "uniqueId": "한라-59.7㎡-11층-2025.07.03-19000"
+    },
+    {
+      "apartment_name": "에코메트로11",
+      "area": "101.991㎡",
+      "floor": "12층",
+      "price": "5억 1,200만원",
+      "price_numeric": 51200,
+      "deal_date": "2025.07.02",
+      "build_year": "2009",
+      "location": "논현동",
+      "price_per_pyeong": "1,657만원",
+      "uniqueId": "에코메트로11-101.991㎡-12층-2025.07.02-51200"
     },
     {
       "apartment_name": "휴먼시아동산마을",
@@ -313,6 +445,18 @@
       "uniqueId": "풍림-85㎡-1층-2025.06.28-25300"
     },
     {
+      "apartment_name": "한라",
+      "area": "59.7㎡",
+      "floor": "12층",
+      "price": "1억 7,500만원",
+      "price_numeric": 17500,
+      "deal_date": "2025.06.27",
+      "build_year": "1996",
+      "location": "논현동",
+      "price_per_pyeong": "967만원",
+      "uniqueId": "한라-59.7㎡-12층-2025.06.27-17500"
+    },
+    {
       "apartment_name": "주공2단지",
       "area": "48.45㎡",
       "floor": "14층",
@@ -409,18 +553,6 @@
       "uniqueId": "주공1단지-59.13㎡-15층-2025.06.27-22000"
     },
     {
-      "apartment_name": "한라",
-      "area": "59.7㎡",
-      "floor": "12층",
-      "price": "1억 7,500만원",
-      "price_numeric": 17500,
-      "deal_date": "2025.06.27",
-      "build_year": "1996",
-      "location": "논현동",
-      "price_per_pyeong": "967만원",
-      "uniqueId": "한라-59.7㎡-12층-2025.06.27-17500"
-    },
-    {
       "apartment_name": "논현푸르지오 더퍼스트",
       "area": "70.1933㎡",
       "floor": "25층",
@@ -443,6 +575,18 @@
       "location": "논현동",
       "price_per_pyeong": "2,019만원",
       "uniqueId": "에코메트로12-84.993㎡-10층-2025.06.27-52000"
+    },
+    {
+      "apartment_name": "유호엔시티101-103동",
+      "area": "84.5507㎡",
+      "floor": "24층",
+      "price": "3억 5,000만원",
+      "price_numeric": 35000,
+      "deal_date": "2025.06.26",
+      "build_year": "2013",
+      "location": "논현동",
+      "price_per_pyeong": "1,366만원",
+      "uniqueId": "유호엔시티101-103동-84.5507㎡-24층-2025.06.26-35000"
     },
     {
       "apartment_name": "주공1단지",
@@ -527,6 +671,18 @@
       "location": "논현동",
       "price_per_pyeong": "1,216만원",
       "uniqueId": "풍림-59.7㎡-18층-2025.06.24-22000"
+    },
+    {
+      "apartment_name": "냇마을신영지웰(9단지)",
+      "area": "96.5212㎡",
+      "floor": "24층",
+      "price": "5억 1,000만원",
+      "price_numeric": 51000,
+      "deal_date": "2025.06.23",
+      "build_year": "2007",
+      "location": "논현동",
+      "price_per_pyeong": "1,744만원",
+      "uniqueId": "냇마을신영지웰(9단지)-96.5212㎡-24층-2025.06.23-51000"
     },
     {
       "apartment_name": "냇마을신영지웰(9단지)",
@@ -755,6 +911,18 @@
       "location": "논현동",
       "price_per_pyeong": "1,652만원",
       "uniqueId": "논현신일해피트리-101.872㎡-10층-2025.06.20-51000"
+    },
+    {
+      "apartment_name": "논현센트럴뷰",
+      "area": "59.58㎡",
+      "floor": "15층",
+      "price": "4억 800만원",
+      "price_numeric": 40800,
+      "deal_date": "2025.06.19",
+      "build_year": "2014",
+      "location": "논현동",
+      "price_per_pyeong": "2,260만원",
+      "uniqueId": "논현센트럴뷰-59.58㎡-15층-2025.06.19-40800"
     },
     {
       "apartment_name": "휴먼시아동산마을",
@@ -2425,6 +2593,6 @@
       "uniqueId": "논현유승한내들-56.1574㎡-33층-2025.05.01-36100"
     }
   ],
-  "timestamp": "2025-07-10T12:45:31.235Z",
-  "date": "2025-07-10"
+  "timestamp": "2025-07-15T11:47:04.132Z",
+  "date": "2025-07-15"
 }
