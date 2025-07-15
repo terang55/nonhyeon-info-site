@@ -1,54 +1,6 @@
 {
   "deals": [
     {
-      "apartment_name": "에코메트로5",
-      "area": "84.986㎡",
-      "floor": "16층",
-      "price": "5억 6,400만원",
-      "price_numeric": 56400,
-      "deal_date": "2025-07-12",
-      "build_year": 2010,
-      "location": "논현동",
-      "price_per_pyeong": "2,190만원",
-      "unique_id": "에코메트로5_84.986㎡_16층_2025-07-12_56400"
-    },
-    {
-      "apartment_name": "주공1단지",
-      "area": "59.13㎡",
-      "floor": "6층",
-      "price": "2억 2,800만원",
-      "price_numeric": 22800,
-      "deal_date": "2025-07-10",
-      "build_year": 1998,
-      "location": "논현동",
-      "price_per_pyeong": "1,272만원",
-      "unique_id": "주공1단지_59.13㎡_6층_2025-07-10_22800"
-    },
-    {
-      "apartment_name": "주공13단지(푸르내마을)",
-      "area": "59.57㎡",
-      "floor": "15층",
-      "price": "3억 900만원",
-      "price_numeric": 30900,
-      "deal_date": "2025-07-05",
-      "build_year": 2006,
-      "location": "논현동",
-      "price_per_pyeong": "1,712만원",
-      "unique_id": "주공13단지(푸르내마을)_59.57㎡_15층_2025-07-05_30900"
-    },
-    {
-      "apartment_name": "논현유승한내들",
-      "area": "56.1574㎡",
-      "floor": "8층",
-      "price": "3억 2,000만원",
-      "price_numeric": 32000,
-      "deal_date": "2025-07-11",
-      "build_year": 2018,
-      "location": "논현동",
-      "price_per_pyeong": "1,880만원",
-      "unique_id": "논현유승한내들_56.1574㎡_8층_2025-07-11_32000"
-    },
-    {
       "apartment_name": "주공2단지",
       "area": "48.45㎡",
       "floor": "1층",
