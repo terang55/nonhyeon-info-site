@@ -14,6 +14,15 @@ interface Deal {
   isNew?: boolean;
 }
 
+interface NewDealApiResponse {
+  unique_id: string;
+  아파트: string;
+  전용면적: string;
+  층: string;
+  거래금액: string;
+  deal_date: string;
+}
+
 interface ApartmentStat {
   name: string;
   count: number;
@@ -38,7 +47,7 @@ export default function RealEstateClientPage() {
       if (newDealsRes.ok) {
         const newDealsResult = await newDealsRes.json();
         if (newDealsResult.success && newDealsResult.data) {
-          newDealsData = newDealsResult.data.map((deal: any) => ({
+          newDealsData = newDealsResult.data.map((deal: NewDealApiResponse) => ({
             unique_id: deal.unique_id,
             apartment_name: deal.아파트,
             area: deal.전용면적 + '㎡',
