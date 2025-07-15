@@ -3,9 +3,26 @@
 import React, { useEffect, useState } from 'react';
 import RealEstateWidget from '../components/RealEstateWidget';
 
+interface Deal {
+  unique_id: string;
+  apartment_name: string;
+  area: string;
+  floor: string;
+  price: string;
+  price_per_pyeong?: string;
+  deal_date: string;
+  isNew?: boolean;
+}
+
+interface ApartmentStat {
+  name: string;
+  count: number;
+  avg_price: string;
+}
+
 export default function RealEstateClientPage() {
-  const [allDeals, setAllDeals] = useState<any[]>([]);
-  const [apartmentStats, setApartmentStats] = useState([]);
+  const [allDeals, setAllDeals] = useState<Deal[]>([]);
+  const [apartmentStats, setApartmentStats] = useState<ApartmentStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedApartment, setSelectedApartment] = useState<string | null>(null);
@@ -20,7 +37,7 @@ export default function RealEstateClientPage() {
 
       if (result.data?.deals && result.data.deals.length > 0) {
         // 1. 날짜 문자열을 Date 객체로 변환
-        const dealsWithDateObjects = result.data.deals.map((deal: any) => ({
+        const dealsWithDateObjects = result.data.deals.map((deal: Deal) => ({
           ...deal,
           // 'YYYY.MM.DD' 형식을 'YYYY-MM-DD'로 변환하여 Date 객체 생성
           dealDateObject: new Date(deal.deal_date.replace(/\./g, '-')),
@@ -28,7 +45,7 @@ export default function RealEstateClientPage() {
 
         // 2. 가장 최근 거래 날짜 찾기 (getTime()으로 유효한 날짜만 필터링)
         const validTimes = dealsWithDateObjects
-          .map((d: any) => d.dealDateObject.getTime())
+          .map((d: Deal & { dealDateObject: Date }) => d.dealDateObject.getTime())
           .filter((t: number) => !isNaN(t));
         
         let mostRecentTime = 0;
@@ -37,7 +54,7 @@ export default function RealEstateClientPage() {
         }
 
         // 3. isNew 플래그 설정
-        const processedDeals = dealsWithDateObjects.map((deal: any) => ({
+        const processedDeals = dealsWithDateObjects.map((deal: Deal & { dealDateObject: Date }) => ({
           ...deal,
           // 가장 최근 거래와 날짜가 동일한 모든 거래를 신규로 표시
           isNew: deal.dealDateObject && !isNaN(deal.dealDateObject.getTime()) && deal.dealDateObject.getTime() === mostRecentTime,
@@ -48,9 +65,9 @@ export default function RealEstateClientPage() {
       }
 
       setApartmentStats(result.data?.apartment_stats || []);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Fetching or processing data failed", e);
-      setError(e.message || '데이터 로딩 실패');
+      setError(e instanceof Error ? e.message : '데이터 로딩 실패');
     } finally {
       setLoading(false);
     }
