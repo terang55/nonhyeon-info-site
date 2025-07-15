@@ -31,34 +31,40 @@ export default function RealEstateClientPage() {
     setLoading(true);
     setError(null);
     try {
+      // 1. 먼저 신규 거래 확인
+      const newDealsRes = await fetch('/api/realestate?checkNew=true');
+      let newDealsData: Deal[] = [];
+      
+      if (newDealsRes.ok) {
+        const newDealsResult = await newDealsRes.json();
+        if (newDealsResult.success && newDealsResult.data) {
+          newDealsData = newDealsResult.data.map((deal: any) => ({
+            unique_id: deal.unique_id,
+            apartment_name: deal.아파트,
+            area: deal.전용면적 + '㎡',
+            floor: deal.층 + '층',
+            price: deal.거래금액,
+            deal_date: deal.deal_date,
+            isNew: true
+          }));
+        }
+      }
+      
+      // 2. 전체 거래 데이터 가져오기
       const res = await fetch('/api/realestate?months=3');
       if (!res.ok) throw new Error('API 오류');
       const result = await res.json();
 
       if (result.data?.deals && result.data.deals.length > 0) {
-        // 1. 날짜 문자열을 Date 객체로 변환
-        const dealsWithDateObjects = result.data.deals.map((deal: Deal) => ({
-          ...deal,
-          // 'YYYY.MM.DD' 형식을 'YYYY-MM-DD'로 변환하여 Date 객체 생성
-          dealDateObject: new Date(deal.deal_date.replace(/\./g, '-')),
-        }));
-
-        // 2. 가장 최근 거래 날짜 찾기 (getTime()으로 유효한 날짜만 필터링)
-        const validTimes = dealsWithDateObjects
-          .map((d: Deal & { dealDateObject: Date }) => d.dealDateObject.getTime())
-          .filter((t: number) => !isNaN(t));
+        // 신규 거래 unique_id 세트 생성
+        const newDealsIds = new Set(newDealsData.map(deal => deal.unique_id));
         
-        let mostRecentTime = 0;
-        if (validTimes.length > 0) {
-            mostRecentTime = Math.max(...validTimes);
-        }
-
-        // 3. isNew 플래그 설정
-        const processedDeals = dealsWithDateObjects.map((deal: Deal & { dealDateObject: Date }) => ({
+        // 전체 거래에 신규 플래그 설정
+        const processedDeals = result.data.deals.map((deal: Deal) => ({
           ...deal,
-          // 가장 최근 거래와 날짜가 동일한 모든 거래를 신규로 표시
-          isNew: deal.dealDateObject && !isNaN(deal.dealDateObject.getTime()) && deal.dealDateObject.getTime() === mostRecentTime,
+          isNew: newDealsIds.has(deal.unique_id)
         }));
+        
         setAllDeals(processedDeals);
       } else {
         setAllDeals([]);
