@@ -1,6 +1,42 @@
 {
   "deals": [
     {
+      "apartment_name": "논현푸르지오 더퍼스트",
+      "area": "61.8717㎡",
+      "floor": "15층",
+      "price": "4억원",
+      "price_numeric": 40000,
+      "deal_date": "2025-07-05",
+      "build_year": 2019,
+      "location": "논현동",
+      "price_per_pyeong": "2,133만원",
+      "unique_id": "논현푸르지오 더퍼스트_61.8717㎡_15층_2025-07-05_40000"
+    },
+    {
+      "apartment_name": "풍림",
+      "area": "124.725㎡",
+      "floor": "4층",
+      "price": "4억 2,800만원",
+      "price_numeric": 42800,
+      "deal_date": "2025-07-12",
+      "build_year": 2000,
+      "location": "논현동",
+      "price_per_pyeong": "1,132만원",
+      "unique_id": "풍림_124.725㎡_4층_2025-07-12_42800"
+    },
+    {
+      "apartment_name": "휴먼시아동산마을",
+      "area": "84.6㎡",
+      "floor": "1층",
+      "price": "3억 6,500만원",
+      "price_numeric": 36500,
+      "deal_date": "2025-07-12",
+      "build_year": 2006,
+      "location": "논현동",
+      "price_per_pyeong": "1,424만원",
+      "unique_id": "휴먼시아동산마을_84.6㎡_1층_2025-07-12_36500"
+    },
+    {
       "apartment_name": "에코메트로5",
       "area": "84.986㎡",
       "floor": "16층",
@@ -2569,8 +2605,8 @@
       "unique_id": "주공13단지(푸르내마을)_51.86㎡_10층_2025-05-07_25000"
     }
   ],
-  "timestamp": "2025-07-15T13:12:24.025Z",
-  "total_count": 215,
+  "timestamp": "2025-07-15T14:02:59.953Z",
+  "total_count": 217,
   "date": "2025-07-15",
   "collection_method": "github_actions_auto",
   "note": "2025-07-15 시점에서 수집된 최근 3개월 전체 거래 데이터"
