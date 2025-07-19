@@ -9,6 +9,7 @@ interface Deal {
   area: string;
   floor: string;
   price: string;
+  price_numeric: number;
   price_per_pyeong?: string;
   deal_date: string;
   isNew?: boolean;
@@ -53,6 +54,7 @@ export default function RealEstateClientPage() {
             area: deal.전용면적 + '㎡',
             floor: deal.층 + '층',
             price: deal.거래금액,
+            price_numeric: parseInt(deal.거래금액.replace(/,/g, '')) || 0,
             deal_date: deal.deal_date,
             isNew: true
           }));
