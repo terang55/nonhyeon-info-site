@@ -108,7 +108,7 @@ function hasNightCare(placeName: string, categoryName: string): boolean {
 }
 
 // HIRA 약국 목록 조회 (남동구 논현동 전체)
-async function fetchHiraPharmacyList() {
+async function fetchHiraPharmacyList(HIRA_API_KEY?: string) {
   // 캐시 확인
   if (hiraPharmacyCache && Date.now() - hiraPharmacyCache.timestamp < CACHE_TTL) {
     return hiraPharmacyCache.items;
@@ -182,7 +182,7 @@ interface HiraHospitalItem {
   ykiho: string;     // 고유 ID
 }
 
-async function fetchHiraHospitalList(): Promise<HiraHospitalItem[]> {
+async function fetchHiraHospitalList(HIRA_API_KEY?: string): Promise<HiraHospitalItem[]> {
   // 캐시 확인
   if (hiraHospitalCache && Date.now() - hiraHospitalCache.timestamp < CACHE_TTL) {
     return hiraHospitalCache.items;
@@ -463,11 +463,11 @@ export async function GET(request: NextRequest) {
 
     // 병원·약국 데이터를 병렬로 가져오기 위한 Promise 생성
     const hospitalPromise = (type === 'hospital' || type === 'all') && HIRA_API_KEY
-      ? fetchHiraHospitalList()
+      ? fetchHiraHospitalList(HIRA_API_KEY)
       : Promise.resolve([] as HiraHospitalItem[]);
 
     const pharmacyPromise = (type === 'pharmacy' || type === 'all') && HIRA_API_KEY
-      ? fetchHiraPharmacyList()
+      ? fetchHiraPharmacyList(HIRA_API_KEY)
       : Promise.resolve([]);
 
     const [hiraHospitals, hiraList] = await Promise.all([hospitalPromise, pharmacyPromise]);
