@@ -12,10 +12,7 @@ const CACHE_TTL = 10 * 60 * 1000; // 10분(ms)
 let hiraHospitalCache: { items: HiraHospitalItem[]; timestamp: number } | null = null;
 let hiraPharmacyCache: { items: unknown[]; timestamp: number } | null = null;
 
-// 디버깅용 로그
-console.log('🔧 환경변수 디버깅:');
-console.log('- process.env.KAKAO_API_KEY:', process.env.KAKAO_API_KEY ? '✅ 존재' : '❌ 없음');
-console.log('- KAKAO_API_KEY 값:', KAKAO_API_KEY ? `✅ ${KAKAO_API_KEY.substring(0, 8)}...` : '❌ undefined');
+// 환경변수 검증은 GET 함수 내에서 수행
 
 interface MedicalInfo {
   id: string;
