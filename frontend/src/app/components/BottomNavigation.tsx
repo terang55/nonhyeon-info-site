@@ -60,20 +60,20 @@ export default function BottomNavigation() {
     <>
       {/* 하단 네비게이션 바 */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden">
-        <div className="flex justify-around items-center py-3 pb-safe">
+        <div className="flex justify-around items-center py-2 pb-safe px-2">
           {navItems.map((item) => (
             <button
               key={item.path + (item.categoryName || '')}
               onClick={() => handleNavClick(item)}
-              className={`flex flex-col items-center py-2 px-4 transition-colors duration-200 min-h-[48px] min-w-[48px] justify-center ${
+              className={`flex flex-col items-center py-3 px-3 transition-colors duration-200 min-h-[56px] min-w-[56px] justify-center rounded-lg ${
                 isActive(item) 
-                  ? 'text-blue-600' 
-                  : 'text-gray-600 hover:text-gray-800'
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
               }`}
               aria-label={`${item.label} 페이지로 이동`}
             >
-              <span className="text-2xl mb-1">{item.icon}</span>
-              <span className="text-sm font-medium">{item.label}</span>
+              <span className="text-xl mb-1">{item.icon}</span>
+              <span className="text-xs font-medium">{item.label}</span>
             </button>
           ))}
         </div>

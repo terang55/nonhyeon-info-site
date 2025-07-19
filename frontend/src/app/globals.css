@@ -138,4 +138,38 @@ body {
       padding-bottom: calc(80px + env(safe-area-inset-bottom));
     }
   }
+  
+  /* 모바일 터치 최적화 */
+  button, a {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    touch-action: manipulation;
+  }
+  
+  /* 한국어 텍스트 최적화 */
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* 모바일 스크롤 최적화 */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* 포커스 링 개선 */
+  button:focus, a:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+  
+  /* 터치 타겟 최소 크기 보장 */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
