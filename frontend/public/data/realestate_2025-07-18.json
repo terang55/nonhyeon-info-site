@@ -1,29 +1,6 @@
 {
   "deals": [
-    {
-      "apartment_name": "주공13단지(푸르내마을)",
-      "area": "59.57㎡",
-      "floor": "6층",
-      "price": "3억 1,000만원",
-      "price_numeric": 31000,
-      "deal_date": "2025-07-12",
-      "build_year": 2006,
-      "location": "논현동",
-      "price_per_pyeong": "1,717만원",
-      "unique_id": "주공13단지(푸르내마을)_59.57㎡_6층_2025-07-12_31000"
-    },
-    {
-      "apartment_name": "주공13단지(푸르내마을)",
-      "area": "59.71㎡",
-      "floor": "17층",
-      "price": "2억 9,800만원",
-      "price_numeric": 29800,
-      "deal_date": "2025-07-12",
-      "build_year": 2006,
-      "location": "논현동",
-      "price_per_pyeong": "1,647만원",
-      "unique_id": "주공13단지(푸르내마을)_59.71㎡_17층_2025-07-12_29800"
-    },
+
     {
       "apartment_name": "풍림",
       "area": "85㎡",
@@ -2678,7 +2655,7 @@
     }
   ],
   "timestamp": "2025-07-17T21:19:43.772Z",
-  "total_count": 223,
+  "total_count": 221,
   "date": "2025-07-18",
   "collection_method": "github_actions_auto",
   "note": "2025-07-18 시점에서 수집된 최근 3개월 전체 거래 데이터"
