@@ -45,7 +45,7 @@ function calculatePricePerPyeong(price: number, area: string): string {
 }
 
 // 특정 날짜의 부동산 데이터를 국토교통부 API에서 직접 가져오기
-async function fetchRealEstateDataByDate(targetDate: string): Promise<ProcessedDeal[]> {
+async function fetchRealEstateDataByDate(targetDate: string, MOLIT_API_KEY: string): Promise<ProcessedDeal[]> {
   const deals: ProcessedDeal[] = [];
   const parser = new XMLParser({ ignoreAttributes: false, trimValues: true });
   
@@ -206,7 +206,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       // 두 파일 모두 없는 경우에만 API 대체 로직 사용
       if (yesterdayDeals.length === 0 && todayDeals.length === 0) {
         logger.warn('어제와 오늘 데이터 파일이 모두 없습니다. API 실시간 수집으로 대체합니다.');
-        return await handleFallbackApiComparison(yesterdayDate, todayDate);
+        return await handleFallbackApiComparison(yesterdayDate, todayDate, MOLIT_API_KEY);
       }
       
       // 어제 파일만 없는 경우: 오늘 모든 거래를 신규로 처리
@@ -548,13 +548,13 @@ async function loadDailyDataFromFile(date: string): Promise<ProcessedDeal[]> {
 }
 
 // 파일이 없는 경우 대체 API 호출 (기존 fetchRealEstateDataByDate 함수 활용)
-async function handleFallbackApiComparison(yesterdayDate: string, todayDate: string) {
+async function handleFallbackApiComparison(yesterdayDate: string, todayDate: string, MOLIT_API_KEY: string) {
   logger.info('대체 API 비교 모드 시작');
   
   try {
     const [yesterdayDeals, todayDeals] = await Promise.all([
-      fetchRealEstateDataByDate(yesterdayDate),
-      fetchRealEstateDataByDate(todayDate)
+      fetchRealEstateDataByDate(yesterdayDate, MOLIT_API_KEY),
+      fetchRealEstateDataByDate(todayDate, MOLIT_API_KEY)
     ]);
     
     const yesterdayUniqueIds = new Set(
