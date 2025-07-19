@@ -306,8 +306,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           const response = await fetch(apiUrl.toString());
           const xmlText = await response.text();
           
-          // 응답 상태 로깅
+          // 응답 상태 및 내용 로깅
           logger.info(`API 응답 상태 - ${yearMonth} 페이지 ${pageNo}: ${response.status}`);
+          logger.info(`API URL: ${apiUrl.toString()}`);
+          logger.info(`응답 길이: ${xmlText.length}자`);
+          
+          // 빈 응답 체크
+          if (!xmlText || xmlText.trim().length === 0) {
+            logger.error(`빈 응답 수신 - ${yearMonth} 페이지 ${pageNo}`);
+            break;
+          }
           
           if (!response.ok) {
             logger.error(`API 호출 실패 - ${yearMonth} 페이지 ${pageNo}: ${response.status} ${response.statusText}`);
