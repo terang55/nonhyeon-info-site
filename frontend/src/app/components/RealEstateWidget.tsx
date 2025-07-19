@@ -1,6 +1,37 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useHaptic } from '@/utils/haptics';
+
+// 논현동 아파트명 상수 (실제 거래 데이터 기반)
+const NONHYEON_APARTMENT_NAMES = [
+  "냇마을신영지웰(9단지)",
+  "논현 파크 포레",
+  "논현단풍마을트리플에듀",
+  "논현센트럴뷰",
+  "논현신일해피트리",
+  "논현유승한내들",
+  "논현푸르지오 더퍼스트",
+  "논현힐스테이트",
+  "동보",
+  "별빛마을웰카운티(10단지)",
+  "어진마을한화꿈에그린(6단지)",
+  "에코메트로10",
+  "에코메트로11",
+  "에코메트로12",
+  "에코메트로5",
+  "에코메트로6",
+  "에코메트로7",
+  "에코메트로9",
+  "유호엔시티101-103동",
+  "인천 소래논현구역 C10블록 에코메트로 3차 더 타워",
+  "주공13단지(푸르내마을)",
+  "주공1단지",
+  "주공2단지",
+  "풍림",
+  "한라",
+  "휴먼시아동산마을",
+];
 
 interface Deal {
   unique_id: string;
@@ -33,6 +64,11 @@ interface RealEstateWidgetProps {
 export default function RealEstateWidget({ deals, newDeals, apartmentStats, onApartmentSelect, onRefresh, onShowAll, selectedApartment }: RealEstateWidgetProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [apartmentSearchTerm, setApartmentSearchTerm] = useState('');
+  const [showAutoComplete, setShowAutoComplete] = useState(false);
+  const [selectedAutoCompleteIndex, setSelectedAutoCompleteIndex] = useState(-1);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const autoCompleteRef = useRef<HTMLDivElement>(null);
+  const { haptic } = useHaptic();
 
   // 검색 필터링된 거래
   const filteredDeals = useMemo(() => {
@@ -49,6 +85,14 @@ export default function RealEstateWidget({ deals, newDeals, apartmentStats, onAp
       apt.name.toLowerCase().includes(apartmentSearchTerm.toLowerCase())
     );
   }, [apartmentStats, apartmentSearchTerm]);
+
+  // 자동완성 필터링된 아파트명
+  const filteredAutoComplete = useMemo(() => {
+    if (!searchTerm.trim()) return [];
+    return NONHYEON_APARTMENT_NAMES.filter(name =>
+      name.toLowerCase().includes(searchTerm.toLowerCase())
+    ).slice(0, 8); // 최대 8개만 표시
+  }, [searchTerm]);
 
   // 통계 계산
   const statistics = useMemo(() => {
@@ -96,28 +140,142 @@ export default function RealEstateWidget({ deals, newDeals, apartmentStats, onAp
     };
   }, [deals, filteredDeals, selectedApartment]);
 
+  // 자동완성 관련 이벤트 핸들러
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setShowAutoComplete(value.trim().length > 0 && filteredAutoComplete.length > 0);
+    setSelectedAutoCompleteIndex(-1);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showAutoComplete || filteredAutoComplete.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        haptic('light'); // 키보드 네비게이션 시 가벼운 진동
+        setSelectedAutoCompleteIndex(prev => 
+          prev < filteredAutoComplete.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        haptic('light'); // 키보드 네비게이션 시 가벼운 진동
+        setSelectedAutoCompleteIndex(prev => 
+          prev > 0 ? prev - 1 : filteredAutoComplete.length - 1
+        );
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedAutoCompleteIndex >= 0) {
+          haptic('medium'); // 선택 시 중간 진동
+          selectApartment(filteredAutoComplete[selectedAutoCompleteIndex]);
+        }
+        break;
+      case 'Escape':
+        setShowAutoComplete(false);
+        setSelectedAutoCompleteIndex(-1);
+        break;
+    }
+  };
+
+  const selectApartment = (apartmentName: string) => {
+    setSearchTerm(apartmentName);
+    setShowAutoComplete(false);
+    setSelectedAutoCompleteIndex(-1);
+    if (searchInputRef.current) {
+      searchInputRef.current.blur();
+    }
+  };
+
+  // 외부 클릭 시 자동완성 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (autoCompleteRef.current && !autoCompleteRef.current.contains(event.target as Node)) {
+        setShowAutoComplete(false);
+        setSelectedAutoCompleteIndex(-1);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // 자동완성 결과 변경 시 표시 상태 업데이트
+  useEffect(() => {
+    setShowAutoComplete(searchTerm.trim().length > 0 && filteredAutoComplete.length > 0);
+  }, [filteredAutoComplete.length, searchTerm]);
+
   return (
     <div className="flex flex-col gap-6">
       {/* 검색창 */}
       <section className="bg-white rounded-xl shadow p-6">
         <div className="flex items-center gap-4">
-          <div className="flex-1 relative">
+          <div className="flex-1 relative" ref={autoCompleteRef}>
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <input
+              ref={searchInputRef}
               type="text"
-              placeholder="단지명을 입력하세요 (예: 송도센트럴파크)"
+              placeholder="단지명을 입력하세요 (예: 더타워)"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
+              onKeyDown={handleKeyDown}
+              onFocus={() => {
+                if (searchTerm.trim() && filteredAutoComplete.length > 0) {
+                  setShowAutoComplete(true);
+                }
+              }}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             />
+            
+            {/* 자동완성 드롭다운 */}
+            {showAutoComplete && filteredAutoComplete.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                {filteredAutoComplete.map((apartmentName, index) => (
+                  <div
+                    key={apartmentName}
+                    className={`px-4 py-3 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0 ${
+                      index === selectedAutoCompleteIndex 
+                        ? 'bg-blue-50 text-blue-700' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => {
+                      haptic('medium'); // 클릭 시 중간 진동
+                      selectApartment(apartmentName);
+                    }}
+                    onMouseEnter={() => setSelectedAutoCompleteIndex(index)}
+                  >
+                    <div className="font-medium text-sm">
+                      {/* 검색어 하이라이팅 */}
+                      {searchTerm.trim() ? (
+                        apartmentName.split(new RegExp(`(${searchTerm})`, 'gi')).map((part, i) =>
+                          part.toLowerCase() === searchTerm.toLowerCase() ? (
+                            <span key={i} className="bg-yellow-200 font-semibold">{part}</span>
+                          ) : (
+                            <span key={i}>{part}</span>
+                          )
+                        )
+                      ) : (
+                        apartmentName
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           {searchTerm && (
             <button
-              onClick={() => setSearchTerm('')}
+              onClick={() => {
+                setSearchTerm('');
+                setShowAutoComplete(false);
+                setSelectedAutoCompleteIndex(-1);
+              }}
               className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50"
             >
               초기화
