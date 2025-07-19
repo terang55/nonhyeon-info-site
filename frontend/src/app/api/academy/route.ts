@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getEnvVar } from '@/lib/env';
 
 // 이 API는 실시간으로 NEIS 학원·교습소 정보를 호출한 뒤
 // 도로명주소(FA_RDNMA, FA_RDNDA)에 '논현동' 키워드가 포함된 항목만 필터링하여 반환합니다.
@@ -25,7 +26,19 @@ export async function GET(request: NextRequest) {
   const dongKeyword = searchParams.get('dong') || '논현동';
   const keywordRegex = new RegExp(dongKeyword, 'i');
 
-  const apiKey = process.env.ACADEMY_API_KEY || 'be1e77cd70ae4203b94e26667165c55d';
+  // 환경변수 검증
+  let apiKey: string;
+  try {
+    apiKey = getEnvVar('ACADEMY_API_KEY');
+    console.log('🎓 학원 API 키 검증 완료');
+  } catch (error) {
+    console.error('❌ ACADEMY_API_KEY 환경변수가 설정되지 않았습니다:', error);
+    return NextResponse.json({
+      success: false,
+      error: 'API 키가 설정되지 않았습니다.',
+      data: []
+    }, { status: 400 });
+  }
 
   const baseUrl =
     'https://open.neis.go.kr/hub/acaInsTiInfo?Type=json&pSize=100&ATPT_OFCDC_SC_CODE=E10&ADMST_ZONE_NM=%EB%82%A8%EB%8F%99%EA%B5%AC';

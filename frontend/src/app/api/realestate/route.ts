@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import { XMLParser } from 'fast-xml-parser';
 import { NextRequest } from 'next/server';
 import { createRealEstateLogger } from '@/lib/logger';
+import { getEnvVar } from '@/lib/env';
 
 const logger = createRealEstateLogger();
 
 // API 기반 실시간 비교 (Vercel KV 없이 해결)
 
 // 국토교통부 실거래가 API 설정
-const MOLIT_API_KEY = 'aTgFhrZehAYOxHq4Z3z1iSYeysHfG9Tu43JQhF26U3mdGzr0H8+jR9MzrwPoqr8yOegDO5OO56GmvXzS7rwkdw==';
 const MOLIT_BASE_URL = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade';
 
 const AREA_CODE = '28200'; // 인천 남동구
@@ -161,6 +161,22 @@ function formatPrice(price: number): string {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  // 환경변수 검증
+  let MOLIT_API_KEY: string;
+  try {
+    MOLIT_API_KEY = getEnvVar('MOLIT_API_KEY');
+    logger.info('MOLIT API 키 검증 완료');
+  } catch (error) {
+    logger.error('MOLIT_API_KEY 환경변수가 설정되지 않았습니다:', error);
+    return NextResponse.json({ 
+      success: false,
+      error: 'API 설정 오류가 발생했습니다.',
+      data: [],
+      total_count: 0,
+      is_new_deals: false
+    }, { status: 500 });
+  }
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const checkNew = searchParams.get('checkNew') === 'true';

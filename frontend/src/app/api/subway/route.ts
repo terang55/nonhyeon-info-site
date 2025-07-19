@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getEnvVar } from '@/lib/env';
 
 interface TrainInfo {
   station: string;
@@ -21,17 +22,20 @@ const stationNameMapping: { [key: string]: string } = {
   '소래포구역': '소래포구'
 };
 
-// 서울교통공사 API 키 (환경변수에서 가져오기)
-const SUBWAY_API_KEY = process.env.SEOUL_OPEN_API_KEY;
+// 서울교통공사 API 키는 GET 함수 내에서 검증
 
 export async function GET(request: NextRequest) {
+  // 환경변수 검증
+  let SUBWAY_API_KEY: string | undefined;
   try {
-    // 환경변수 디버깅
-    console.log('🔧 환경변수 디버깅:');
-    console.log('  - SEOUL_OPEN_API_KEY:', process.env.SEOUL_OPEN_API_KEY ? 'EXISTS' : 'NOT_FOUND');
-    console.log('  - NODE_ENV:', process.env.NODE_ENV);
-    console.log('  - 전체 env 키들:', Object.keys(process.env).filter(key => key.includes('SEOUL')));
-    
+    SUBWAY_API_KEY = getEnvVar('SEOUL_OPEN_API_KEY');
+    console.log('🚇 지하철 API 키 검증 완료');
+  } catch (error) {
+    console.log('⚠️ SEOUL_OPEN_API_KEY 환경변수가 설정되지 않음 - 더미 데이터 사용');
+    SUBWAY_API_KEY = undefined;
+  }
+
+  try {
     const searchParams = request.nextUrl.searchParams;
     const stationParam = searchParams.get('station');
     
@@ -43,7 +47,6 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('🚇 요청된 역명:', stationParam);
-    console.log('🔑 API 키 상태:', SUBWAY_API_KEY ? `로드됨 (${SUBWAY_API_KEY.substring(0, 10)}...)` : '❌ 로드 실패');
     
     // 역명 매핑 적용
     const mappedStationName = stationNameMapping[stationParam] || stationParam;
@@ -79,16 +82,25 @@ export async function GET(request: NextRequest) {
       }
     ];
 
-    // 실제 서울교통공사 API 호출 (.env.local에서 가져오기)
-    // 임시: 환경변수 로딩 실패 시 폴백 키 사용
-    const apiKey = SUBWAY_API_KEY || '496144506174657239334644787245';
-    console.log('🔑 사용할 API 키:', apiKey ? `${apiKey.substring(0, 10)}...` : '❌ API 키 없음');
-    console.log('🔑 키 출처:', SUBWAY_API_KEY ? '환경변수' : '폴백 키');
+    // 실제 서울교통공사 API 호출 (환경변수에서만 가져오기)
+    if (!SUBWAY_API_KEY) {
+      console.error('❌ SEOUL_OPEN_API_KEY 환경변수가 설정되지 않았습니다.');
+      console.log('🚇 더미 데이터 반환');
+      
+      return NextResponse.json({
+        success: true,
+        data: dummyTrainData,
+        timestamp: new Date().toISOString(),
+        note: 'API 키가 설정되지 않아 테스트 데이터를 반환합니다'
+      });
+    }
     
-    if (apiKey) {
-      try {
-        // XML 형태로 API 호출
-        const apiUrl = `http://swopenapi.seoul.go.kr/api/subway/${apiKey}/xml/realtimeStationArrival/0/5/${encodeURIComponent(mappedStationName)}`;
+    console.log('🔑 사용할 API 키:', `${SUBWAY_API_KEY.substring(0, 10)}...`);
+    console.log('🔑 키 출처: 환경변수');
+    
+    try {
+      // XML 형태로 API 호출
+      const apiUrl = `http://swopenapi.seoul.go.kr/api/subway/${SUBWAY_API_KEY}/xml/realtimeStationArrival/0/5/${encodeURIComponent(mappedStationName)}`;
         
         console.log('🚇 API 호출:', apiUrl);
         
@@ -149,10 +161,9 @@ export async function GET(request: NextRequest) {
           });
         }
         
-      } catch (apiError) {
-        console.error('🚇 실제 API 호출 실패:', apiError);
-        // API 실패 시 더미 데이터로 폴백
-      }
+    } catch (apiError) {
+      console.error('🚇 실제 API 호출 실패:', apiError);
+      // API 실패 시 더미 데이터로 폴백
     }
 
     // API 키가 없거나 실패한 경우 더미 데이터 반환

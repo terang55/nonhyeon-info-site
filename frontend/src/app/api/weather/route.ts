@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
+import { getEnvVar } from '@/lib/env';
 
 // 인천 남동구 논현동 행정동 중심 좌표
 const NONHYEON_LAT = 37.3988;
 const NONHYEON_LON = 126.7359;
 
-// OpenWeather API 키 (환경변수에서만 가져오기)
-const API_KEY = process.env.OPENWEATHER_API_KEY;
+// OpenWeather API 키는 GET 함수 내에서 검증
 
 // 환경 변수 로드 확인 (개발용)
 console.log('🔧 환경 변수 확인:', {
@@ -63,29 +63,17 @@ interface WeatherData {
 }
 
 export async function GET() {
+  // 환경변수 검증
+  let API_KEY: string;
   try {
-    console.log('🌤️ 논현동 날씨 정보 요청');
-    
-    // 모든 환경변수 확인 (디버깅용)
-    console.log('🔍 전체 환경변수 디버깅:', {
-      nodeEnv: process.env.NODE_ENV,
-      hasOpenWeather: !!process.env.OPENWEATHER_API_KEY,
-      openWeatherLength: process.env.OPENWEATHER_API_KEY?.length || 0,
-      hasSeoul: !!process.env.SEOUL_OPEN_API_KEY,
-      allKeys: Object.keys(process.env).filter(key => key.includes('API_KEY')),
-      processEnvKeys: Object.keys(process.env).length
-    });
+    API_KEY = getEnvVar('OPENWEATHER_API_KEY');
+    console.log('🌤️ 논현동 날씨 정보 요청 - API 키 검증 완료');
+  } catch (error) {
+    console.error('❌ OpenWeather API 키가 설정되지 않았습니다:', error);
+    throw new Error('API 키가 필요합니다');
+  }
 
-    // API 키 확인
-    if (!API_KEY) {
-      console.error('❌ OpenWeather API 키가 설정되지 않았습니다');
-      console.error('🔍 디버깅 정보:', {
-        API_KEY_value: API_KEY,
-        env_value: process.env.OPENWEATHER_API_KEY,
-        typeof_env: typeof process.env.OPENWEATHER_API_KEY
-      });
-      throw new Error('API 키가 필요합니다');
-    }
+  try {
 
     // 현재 날씨 정보 가져오기
     const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${NONHYEON_LAT}&lon=${NONHYEON_LON}&appid=${API_KEY}&units=metric&lang=kr`;

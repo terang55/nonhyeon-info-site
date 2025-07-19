@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getEnvVar, hasEnvVar } from '@/lib/env';
 
 // 인천논현역 중심 좌표 (Suin·Bundang Line)
 const NONHYEON_LAT = 37.4011;
 const NONHYEON_LON = 126.7229;
 
-// 카카오맵 API 키 (환경변수에서 가져오기)
-const KAKAO_API_KEY = process.env.KAKAO_API_KEY;
-
-// HIRA 서비스키가 환경변수에 없을 경우, 임시 하드코딩 값 사용 (테스트용)
-const HIRA_API_KEY = process.env.HIRA_SERVICE_KEY || 'aTgFhrZehAYOxHq4Z3z1iSYeysHfG9Tu43JQhF26U3mdGzr0H8%2BjR9MzrwPoqr8yOegDO5OO56GmvXzS7rwkdw%3D%3D';
+// API 키들은 GET 함수 내에서 검증
 
 // 전역 캐시 (메모리) 설정 - 10분간 유지
 const CACHE_TTL = 10 * 60 * 1000; // 10분(ms)
@@ -303,6 +300,15 @@ async function geocodeAddress(address: string) {
 // ----------------------------------------------------------------
 
 export async function GET(request: NextRequest) {
+  // 환경변수 검증
+  const KAKAO_API_KEY = hasEnvVar('KAKAO_API_KEY') ? getEnvVar('KAKAO_API_KEY') : undefined;
+  const HIRA_API_KEY = hasEnvVar('HIRA_SERVICE_KEY') ? getEnvVar('HIRA_SERVICE_KEY') : undefined;
+  
+  console.log('🏥 의료기관 API 키 검증:', {
+    kakao: KAKAO_API_KEY ? '✅ 설정됨' : '⚠️ 없음',
+    hira: HIRA_API_KEY ? '✅ 설정됨' : '⚠️ 없음'
+  });
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const type = searchParams.get('type') || 'all'; // hospital, pharmacy, all
@@ -323,9 +329,6 @@ export async function GET(request: NextRequest) {
       userLat,
       userLon
     });
-
-    // 환경변수 확인
-    console.log('🔑 카카오 API 키 상태:', KAKAO_API_KEY ? '로드됨' : '❌ 로드 실패');
 
     if (!KAKAO_API_KEY) {
       // API 키 없이도 작동하도록 더미 데이터 제공
