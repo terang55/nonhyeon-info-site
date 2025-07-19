@@ -9,6 +9,8 @@ interface EnvConfig {
   SEOUL_OPEN_API_KEY?: string;
   KAKAO_API_KEY?: string;
   MOLIT_API_KEY?: string;
+  HIRA_SERVICE_KEY?: string;
+  ACADEMY_API_KEY?: string;
   
   // Next.js 설정
   NODE_ENV: string;
@@ -53,6 +55,8 @@ const getRecommendedEnvVars = (): string[] => [
   'SEOUL_OPEN_API_KEY',   // 대중교통 정보  
   'KAKAO_API_KEY',        // 지도 서비스
   'MOLIT_API_KEY',        // 부동산 정보
+  'HIRA_SERVICE_KEY',     // 의료기관 정보
+  'ACADEMY_API_KEY',      // 학원 정보
 ];
 
 /**
@@ -141,6 +145,8 @@ export function getEnvironmentConfig() {
       realEstate: hasEnvVar('MOLIT_API_KEY'),
       maps: hasEnvVar('KAKAO_API_KEY'),
       transit: hasEnvVar('SEOUL_OPEN_API_KEY'),
+      medical: hasEnvVar('HIRA_SERVICE_KEY'),
+      academy: hasEnvVar('ACADEMY_API_KEY'),
     },
     
     // 디버그 설정
