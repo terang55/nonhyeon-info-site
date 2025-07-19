@@ -111,6 +111,8 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const search = searchParams.get('search');
     const limit = parseInt(searchParams.get('limit') || '50');
+    const page = parseInt(searchParams.get('page') || '1');
+    const offset = (page - 1) * limit;
 
     // 필터링
     let filteredNews = allNews;
@@ -164,13 +166,20 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // 제한된 개수만 반환
-    filteredNews = filteredNews.slice(0, limit);
+    // 전체 개수 저장 (페이지네이션을 위해)
+    const totalItems = filteredNews.length;
+    
+    // 페이지네이션 적용
+    const paginatedNews = filteredNews.slice(offset, offset + limit);
 
     return NextResponse.json({
       success: true,
-      data: filteredNews,
-      total: filteredNews.length,
+      data: paginatedNews,
+      total: paginatedNews.length,
+      totalItems,
+      page,
+      limit,
+      hasMore: offset + limit < totalItems,
       timestamp: new Date().toISOString()
     }, {
       headers: {

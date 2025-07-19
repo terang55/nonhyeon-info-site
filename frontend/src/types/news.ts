@@ -29,6 +29,10 @@ export interface ApiResponse {
   success: boolean;
   data: NewsItem[];
   total: number;
+  totalItems?: number;
+  page?: number;
+  limit?: number;
+  hasMore?: boolean;
   timestamp: string;
   note?: string;
 }
