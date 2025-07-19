@@ -25,6 +25,9 @@ import Footer from './Footer';
 // Error Boundary
 import ErrorBoundary from './ErrorBoundary';
 
+// Structured Data
+import StructuredDataProvider from './StructuredDataProvider';
+
 export default function HomeClient() {
   // 커스텀 훅들
   const { selectedCategory, handleCategoryChange } = useCategory();
@@ -34,6 +37,12 @@ export default function HomeClient() {
   
   // URL 파라미터 처리
   useUrlParams();
+
+  // Breadcrumb 데이터 생성
+  const breadcrumbs = [
+    { name: '홈', url: 'https://nonhyeon.life' },
+    ...(selectedCategory !== '전체' ? [{ name: selectedCategory, url: `https://nonhyeon.life/?category=${selectedCategory}` }] : [])
+  ];
 
   // 데이터 페칭
   useEffect(() => {
@@ -51,6 +60,13 @@ export default function HomeClient() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* 구조화된 데이터 제공 */}
+      <StructuredDataProvider
+        newsItems={news}
+        category={selectedCategory}
+        breadcrumbs={breadcrumbs}
+      />
+      
       {/* Header */}
       <Header syncStatus={syncStatus} />
 

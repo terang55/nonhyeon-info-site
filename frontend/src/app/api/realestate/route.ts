@@ -166,6 +166,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     MOLIT_API_KEY = getEnvVar('MOLIT_API_KEY');
     logger.info('MOLIT API 키 검증 완료');
+    logger.info(`API 키 길이: ${MOLIT_API_KEY.length}자`);
+    logger.info(`API 키 시작: ${MOLIT_API_KEY.substring(0, 20)}...`);
+    logger.info(`API 키 끝: ...${MOLIT_API_KEY.substring(MOLIT_API_KEY.length - 10)}`);
   } catch (error) {
     logger.error('MOLIT_API_KEY 환경변수가 설정되지 않았습니다:', error);
     return NextResponse.json({ 
@@ -309,6 +312,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           // 응답 상태 및 내용 로깅
           logger.info(`API 응답 상태 - ${yearMonth} 페이지 ${pageNo}: ${response.status}`);
           logger.info(`API URL: ${apiUrl.toString()}`);
+          logger.info(`API 키 (마지막 4자): ...${MOLIT_API_KEY.slice(-4)}`);
+          logger.info(`응답 상태: ${response.status} ${response.statusText}`);
+          logger.info(`응답 헤더: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`);
           logger.info(`응답 길이: ${xmlText.length}자`);
           
           // 빈 응답 체크
@@ -336,8 +342,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           
           // 첫 번째 페이지에서만 전체 응답 구조 로깅
           if (pageNo === 1) {
-            logger.info(`전체 XML 응답 샘플 - ${yearMonth}:`, xmlText.substring(0, 500));
-            logger.info(`파싱된 응답 구조:`, JSON.stringify(parsed, null, 2).substring(0, 1000));
+            logger.info(`=== XML 응답 디버깅 시작 - ${yearMonth} ===`);
+            logger.info(`XML 응답 길이: ${xmlText.length}자`);
+            logger.info(`XML 응답 내용: "${xmlText}"`);
+            logger.info(`XML 타입: ${typeof xmlText}`);
+            logger.info(`파싱 시도 전 XML 샘플: ${xmlText.substring(0, 200)}`);
+            
+            try {
+              const testParsed = parser.parse(xmlText);
+              logger.info(`파싱 성공! 구조: ${JSON.stringify(testParsed, null, 2)}`);
+            } catch (parseError) {
+              logger.error(`파싱 실패! 에러: ${parseError.message}`);
+              logger.info(`파싱 실패한 XML: ${xmlText}`);
+            }
+            logger.info(`=== XML 응답 디버깅 종료 - ${yearMonth} ===`);
           }
           
           const items = parsed?.response?.body?.items?.item;
@@ -735,6 +753,9 @@ export async function POST(_request: NextRequest): Promise<NextResponse> {
   try {
     MOLIT_API_KEY = getEnvVar('MOLIT_API_KEY');
     logger.info('MOLIT API 키 검증 완료');
+    logger.info(`API 키 길이: ${MOLIT_API_KEY.length}자`);
+    logger.info(`API 키 시작: ${MOLIT_API_KEY.substring(0, 20)}...`);
+    logger.info(`API 키 끝: ...${MOLIT_API_KEY.substring(MOLIT_API_KEY.length - 10)}`);
   } catch (error) {
     logger.error('MOLIT_API_KEY 환경변수가 설정되지 않았습니다:', error);
     return NextResponse.json({ 

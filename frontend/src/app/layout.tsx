@@ -6,6 +6,7 @@ import { BASE_URL } from '@/lib/siteConfig';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import NetworkStatus from './components/NetworkStatus';
 import BottomNavigation from './components/BottomNavigation';
+import WebVitalsMonitor from './components/WebVitalsMonitor';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -536,6 +537,7 @@ export default function RootLayout({
         {children}
         <BottomNavigation />
         <PWAInstallPrompt />
+        <WebVitalsMonitor />
       </body>
     </html>
   );

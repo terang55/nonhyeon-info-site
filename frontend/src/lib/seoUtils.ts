@@ -164,18 +164,33 @@ function getArticleSection(type?: string): string {
  * @returns 메타데이터 객체
  */
 export function generatePageMetadata(
-  page: 'home' | 'realestate' | 'subway' | 'academy',
+  page: 'home' | 'realestate' | 'subway' | 'academy' | 'category',
   customData?: {
     title?: string;
     description?: string;
     keywords?: string[];
     image?: string;
+    category?: string;
   }
 ) {
   const baseUrl = 'https://nonhyeon.life';
   const commonKeywords = [
-    '인천논현동', '인천 논현동', '인천시 남동구 논현동', '남동구 논현동', 
-    '논현지구', '에코메트로', '소래포구', '호구포'
+    // 핵심 지역
+    '인천논현동', '인천 논현동', '인천시 남동구 논현동', '남동구 논현동', '논현지구',
+    // 주요 랜드마크
+    '에코메트로', '소래포구', '호구포', '냇마을', '논현지구 중심상가',
+    // 교통 (지하철역)
+    '인천논현역', '호구포역', '소래포구역', '수인분당선',
+    // 인근 지역
+    '구월동', '간석동', '만수동', '장수서', '논현1동', '논현2동',
+    // 주요 시설
+    '남동구청', '논현도서관', '논현복지관', '논현초등학교', '논현중학교',
+    // 생활편의시설
+    '롯데마트 논현점', '이마트 논현점', '논현시장', 'CGV 논현',
+    // 의료기관
+    '인천적십자병원', '논현연세병원', '논현가정의학과',
+    // 교육기관
+    '논현어린이집', '논현유치원', '논현학원가'
   ];
 
   const pageConfig = {
@@ -214,11 +229,25 @@ export function generatePageMetadata(
         '인천논현동 학원', '논현동 교육', '논현동 어린이집', '논현동 유치원'
       ],
       path: '/academy'
+    },
+    category: {
+      title: '인천논현라이프 | 카테고리별 정보',
+      description: '인천 남동구 논현동 카테고리별 최신 정보를 확인하세요.',
+      keywords: [...commonKeywords],
+      path: ''
     }
   };
 
-  const config = pageConfig[page];
-  const url = `${baseUrl}${config.path}`;
+  let config = pageConfig[page];
+  
+  // 카테고리별 메타데이터 처리
+  if (page === 'category' && customData?.category) {
+    config = generateCategoryMetadata(customData.category, commonKeywords);
+  }
+  
+  const url = customData?.category 
+    ? `${baseUrl}?category=${encodeURIComponent(customData.category)}`
+    : `${baseUrl}${config.path}`;
 
   return {
     title: customData?.title || config.title,
@@ -260,6 +289,66 @@ export function generatePageMetadata(
         'max-snippet': -1,
       },
     },
+  };
+}
+
+/**
+ * 카테고리별 메타데이터 생성
+ * @param category - 카테고리명
+ * @param commonKeywords - 공통 키워드
+ * @returns 카테고리별 설정 객체
+ */
+function generateCategoryMetadata(category: string, commonKeywords: string[]) {
+  const categoryConfig: Record<string, any> = {
+    '뉴스': {
+      title: `인천 논현동 뉴스 | 인천논현라이프`,
+      description: '인천 남동구 논현동 최신 뉴스와 지역 소식을 실시간으로 확인하세요.',
+      keywords: [...commonKeywords, '인천논현동 뉴스', '논현동 소식', '남동구 뉴스', '지역뉴스'],
+      path: '?category=뉴스'
+    },
+    '블로그': {
+      title: `인천 논현동 블로그 | 인천논현라이프`,
+      description: '인천 남동구 논현동 관련 블로그 포스트와 생활정보를 확인하세요.',
+      keywords: [...commonKeywords, '인천논현동 블로그', '논현동 생활정보', '남동구 블로그'],
+      path: '?category=블로그'
+    },
+    '유튜브': {
+      title: `인천 논현동 유튜브 | 인천논현라이프`,
+      description: '인천 남동구 논현동 관련 유튜브 영상과 동영상 콘텐츠를 확인하세요.',
+      keywords: [...commonKeywords, '인천논현동 유튜브', '논현동 영상', '남동구 유튜브'],
+      path: '?category=유튜브'
+    },
+    '병원': {
+      title: `인천 논현동 병원 정보 | 인천논현라이프`,
+      description: '인천 남동구 논현동 병원, 의원, 의료기관 정보와 진료시간을 확인하세요.',
+      keywords: [...commonKeywords, '인천논현동 병원', '논현동 의원', '남동구 병원', '논현동 의료기관', '인천논현역 병원'],
+      path: '?category=병원'
+    },
+    '약국': {
+      title: `인천 논현동 약국 정보 | 인천논현라이프`,
+      description: '인천 남동구 논현동 약국 정보와 운영시간, 위치 정보를 확인하세요.',
+      keywords: [...commonKeywords, '인천논현동 약국', '논현동 약국', '남동구 약국', '인천논현역 약국'],
+      path: '?category=약국'
+    },
+    '부동산': {
+      title: `인천 논현동 부동산 | 인천논현라이프`,
+      description: '인천 남동구 논현동 아파트 실거래가, 부동산 시세 정보를 확인하세요.',
+      keywords: [...commonKeywords, '인천논현동 부동산', '논현동 아파트', '논현동 실거래가', '에코메트로 시세'],
+      path: '?category=부동산'
+    },
+    '학원': {
+      title: `인천 논현동 학원 정보 | 인천논현라이프`,
+      description: '인천 남동구 논현동 학원, 교육기관, 어린이집 정보를 확인하세요.',
+      keywords: [...commonKeywords, '인천논현동 학원', '논현동 학원', '남동구 학원', '논현동 교육'],
+      path: '?category=학원'
+    }
+  };
+
+  return categoryConfig[category] || {
+    title: `인천 논현동 ${category} | 인천논현라이프`,
+    description: `인천 남동구 논현동 ${category} 관련 정보를 확인하세요.`,
+    keywords: [...commonKeywords, `인천논현동 ${category}`, `논현동 ${category}`],
+    path: `?category=${category}`
   };
 }
 
