@@ -682,6 +682,20 @@ async function savePreviousData(deals: ProcessedDeal[]): Promise<void> {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function POST(_request: NextRequest): Promise<NextResponse> {
+  // 환경변수 검증
+  let MOLIT_API_KEY: string;
+  try {
+    MOLIT_API_KEY = getEnvVar('MOLIT_API_KEY');
+    logger.info('MOLIT API 키 검증 완료');
+  } catch (error) {
+    logger.error('MOLIT_API_KEY 환경변수가 설정되지 않았습니다:', error);
+    return NextResponse.json({ 
+      success: false,
+      error: 'API 설정 오류가 발생했습니다.',
+      timestamp: new Date().toISOString(),
+    }, { status: 500 });
+  }
+
   try {
     logger.info('신규 거래 비교 모드 시작 (서버 파일 기준)');
     
