@@ -316,13 +316,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           
           const parsed = parser.parse(xmlText);
           
-          // API 응답 구조 로깅
-          logger.debug(`API 응답 구조 - ${yearMonth} 페이지 ${pageNo}:`, {
+          // API 응답 구조 상세 로깅
+          logger.info(`API 응답 구조 - ${yearMonth} 페이지 ${pageNo}:`, {
             hasResponse: !!parsed?.response,
             hasBody: !!parsed?.response?.body,
             hasItems: !!parsed?.response?.body?.items,
-            responseHeader: parsed?.response?.header
+            responseHeader: parsed?.response?.header,
+            bodyKeys: parsed?.response?.body ? Object.keys(parsed.response.body) : [],
+            totalCount: parsed?.response?.body?.totalCount
           });
+          
+          // 첫 번째 페이지에서만 전체 응답 구조 로깅
+          if (pageNo === 1) {
+            logger.info(`전체 XML 응답 샘플 - ${yearMonth}:`, xmlText.substring(0, 500));
+            logger.info(`파싱된 응답 구조:`, JSON.stringify(parsed, null, 2).substring(0, 1000));
+          }
           
           const items = parsed?.response?.body?.items?.item;
 
