@@ -33,28 +33,27 @@ const HeroSection = React.memo(function HeroSection({ stats, syncStatus, news }:
         </div>
         
         {/* 통계 정보 */}
-        <div className="grid grid-cols-3 gap-3 sm:flex sm:justify-center sm:space-x-12 text-center max-w-md sm:max-w-none mx-auto">
-          <div className="bg-white/10 rounded-lg p-3 sm:bg-transparent sm:p-0">
-            <div className="text-lg sm:text-3xl font-bold flex items-center justify-center gap-1 sm:gap-2 mb-1">
-              <span className="text-xl sm:text-4xl">📊</span>
-              <span className="text-base sm:text-3xl">{stats?.totalArticles || news.length}</span>
+        <div className="grid grid-cols-3 gap-4 sm:flex sm:justify-center sm:space-x-12 text-center max-w-lg sm:max-w-none mx-auto">
+          <div className="bg-white/15 rounded-xl p-4 sm:bg-transparent sm:p-0 min-h-[80px] sm:min-h-0 flex flex-col justify-center">
+            <div className="text-2xl sm:text-3xl font-bold flex items-center justify-center gap-2 mb-2">
+              <span className="text-2xl sm:text-4xl">📊</span>
+              <span className="text-xl sm:text-3xl">{stats?.totalArticles || news.length}</span>
             </div>
-            <div className="text-sm sm:text-base text-blue-100">총 콘텐츠</div>
+            <div className="text-sm sm:text-base text-blue-100 font-medium">총 콘텐츠</div>
           </div>
-          <div className="bg-white/10 rounded-lg p-3 sm:bg-transparent sm:p-0">
-            <div className="text-lg sm:text-3xl font-bold flex items-center justify-center gap-1 sm:gap-2 mb-1">
-              <span className="text-xl sm:text-4xl">🏷️</span>
-              <span className="text-base sm:text-3xl">{stats?.summary?.totalCategories || syncStatus?.keywords?.length || '10'}</span>
+          <div className="bg-white/15 rounded-xl p-4 sm:bg-transparent sm:p-0 min-h-[80px] sm:min-h-0 flex flex-col justify-center">
+            <div className="text-2xl sm:text-3xl font-bold flex items-center justify-center gap-2 mb-2">
+              <span className="text-2xl sm:text-4xl">🏷️</span>
+              <span className="text-xl sm:text-3xl">{stats?.summary?.totalCategories || syncStatus?.keywords?.length || '10'}</span>
             </div>
-            <div className="text-sm sm:text-base text-blue-100">키워드</div>
+            <div className="text-sm sm:text-base text-blue-100 font-medium">키워드</div>
           </div>
-          <div className="bg-white/10 rounded-lg p-3 sm:bg-transparent sm:p-0">
-            <div className="text-lg sm:text-3xl font-bold flex items-center justify-center gap-1 sm:gap-2 mb-1">
-              <span className="text-xl sm:text-4xl">⚡</span>
-              <span className="text-base sm:text-3xl hidden sm:inline">실시간</span>
-              <span className="text-sm sm:text-3xl sm:hidden">실시간</span>
+          <div className="bg-white/15 rounded-xl p-4 sm:bg-transparent sm:p-0 min-h-[80px] sm:min-h-0 flex flex-col justify-center">
+            <div className="text-lg sm:text-3xl font-bold flex items-center justify-center gap-1 sm:gap-2 mb-2">
+              <span className="text-2xl sm:text-4xl">⚡</span>
+              <span className="text-sm sm:text-3xl">실시간</span>
             </div>
-            <div className="text-sm sm:text-base text-blue-100">자동 업데이트</div>
+            <div className="text-sm sm:text-base text-blue-100 font-medium">자동 업데이트</div>
           </div>
         </div>
         
