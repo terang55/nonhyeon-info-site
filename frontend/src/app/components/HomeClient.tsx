@@ -1,11 +1,95 @@
 'use client';
 
-// Home page client component extracted from page.tsx to enable server-side metadata.
-// All original logic remains unchanged.
+import React, { useEffect } from 'react';
+import { useNews } from '@/hooks/useNews';
+import { useSyncStatus } from '@/hooks/useSyncStatus';
+import { useStats } from '@/hooks/useStats';
+import { useCategory } from '@/hooks/useCategory';
+import { useUrlParams } from '@/hooks/useUrlParams';
 
-// 현재 HomeClient는 서버 컴포넌트 분리 작업 준비용 빈 껍데기입니다.
-// 추후 로직 분리 시 실제 구현을 추가합니다.
+// Layout Components
+import Header from './layout/Header';
+import Navigation from './layout/Navigation';
+import HeroSection from './layout/HeroSection';
+import CategoryFilter from './layout/CategoryFilter';
+
+// News Components
+import NewsContent from './news/NewsContent';
+
+// Widget Components (동적 임포트)
+import DynamicMedicalWidget from './DynamicMedicalWidget';
+
+// Footer Component
+import Footer from './Footer';
+
+// Error Boundary
+import ErrorBoundary from './ErrorBoundary';
 
 export default function HomeClient() {
-  return null; // eslint 통과용 최소 반환값
+  // 커스텀 훅들
+  const { selectedCategory, handleCategoryChange } = useCategory();
+  const { news, loading, error, fetchNews, setNews, setError } = useNews(selectedCategory);
+  const { syncStatus, fetchSyncStatus } = useSyncStatus();
+  const { stats, fetchStats } = useStats();
+  
+  // URL 파라미터 처리
+  useUrlParams();
+
+  // 데이터 페칭
+  useEffect(() => {
+    // 병원, 약국, 부동산 카테고리가 아닐 때만 뉴스 로딩
+    if (selectedCategory !== '병원' && selectedCategory !== '약국' && selectedCategory !== '부동산' && selectedCategory !== '학원') {
+      fetchNews();
+      fetchSyncStatus();
+      fetchStats();
+    } else {
+      // 병원, 약국, 부동산 카테고리일 때는 로딩 상태 해제
+      setError(null);
+      setNews([]);
+    }
+  }, [selectedCategory, fetchNews, fetchSyncStatus, fetchStats, setNews, setError]);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <Header syncStatus={syncStatus} />
+
+      {/* Navigation */}
+      <Navigation />
+
+      {/* Hero Section */}
+      <ErrorBoundary section="히어로">
+        <HeroSection stats={stats} syncStatus={syncStatus} news={news} />
+      </ErrorBoundary>
+
+      {/* Category Filter */}
+      <ErrorBoundary section="카테고리 필터">
+        <CategoryFilter 
+          selectedCategory={selectedCategory} 
+          onCategoryChange={handleCategoryChange} 
+        />
+      </ErrorBoundary>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        {/* 병원/약국 정보 위젯 */}
+        <ErrorBoundary section="의료정보">
+          {selectedCategory === '병원' && <DynamicMedicalWidget initialType="hospital" />}
+          {selectedCategory === '약국' && <DynamicMedicalWidget initialType="pharmacy" />}
+        </ErrorBoundary>
+
+        {/* 메인 콘텐츠: 뉴스/블로그/유튜브 */}
+        <ErrorBoundary section="뉴스">
+          {selectedCategory !== '병원' && selectedCategory !== '약국' && selectedCategory !== '학원' && (
+            <div className="flex flex-col gap-8">
+              <NewsContent news={news} loading={loading} error={error} />
+            </div>
+          )}
+        </ErrorBoundary>
+      </main>
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  );
 } 

@@ -59,6 +59,19 @@ export function getCategoryColor(type?: string): string {
 }
 
 /**
+ * 카테고리 목록
+ */
+export const categories = [
+  '전체',
+  '뉴스',
+  '블로그', 
+  '유튜브',
+  '병원',
+  '약국',
+  '학원'
+];
+
+/**
  * 카테고리별 아이콘 매핑
  */
 export const categoryIcons: { [key: string]: React.ReactNode } = {
@@ -70,19 +83,6 @@ export const categoryIcons: { [key: string]: React.ReactNode } = {
   '부동산': React.createElement('span', { className: 'text-base' }, '🏠'),
   '학원': React.createElement('span', { className: 'text-base' }, '🎓'),
 };
-
-/**
- * 사용 가능한 카테고리 목록
- */
-export const categories = [
-  '전체',
-  '뉴스',
-  '블로그', 
-  '유튜브',
-  '병원',
-  '약국',
-  '학원'
-];
 
 /**
  * 컨텐츠 길이에 따른 요약 생성
