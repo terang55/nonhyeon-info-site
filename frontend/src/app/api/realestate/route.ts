@@ -305,15 +305,36 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         try {
           const response = await fetch(apiUrl.toString());
           const xmlText = await response.text();
+          
+          // 응답 상태 로깅
+          logger.info(`API 응답 상태 - ${yearMonth} 페이지 ${pageNo}: ${response.status}`);
+          
+          if (!response.ok) {
+            logger.error(`API 호출 실패 - ${yearMonth} 페이지 ${pageNo}: ${response.status} ${response.statusText}`);
+            break;
+          }
+          
           const parsed = parser.parse(xmlText);
+          
+          // API 응답 구조 로깅
+          logger.debug(`API 응답 구조 - ${yearMonth} 페이지 ${pageNo}:`, {
+            hasResponse: !!parsed?.response,
+            hasBody: !!parsed?.response?.body,
+            hasItems: !!parsed?.response?.body?.items,
+            responseHeader: parsed?.response?.header
+          });
+          
           const items = parsed?.response?.body?.items?.item;
 
           // items가 없으면 해당 월의 페이지 루프 종료
           if (!items) {
+            logger.info(`${yearMonth} 페이지 ${pageNo}: 데이터 없음, 다음 월로 이동`);
             break;
           }
 
           const itemArray = Array.isArray(items) ? items : [items];
+          
+          logger.info(`${yearMonth} 페이지 ${pageNo}: ${itemArray.length}건 데이터 처리 시작`);
 
           for (const item of itemArray) {
             try {
@@ -326,6 +347,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               const day = item.dealDay || '';
               const buildYear = item.buildYear || '';
               const dong = item.umdNm || '';
+
+              // 모든 동 정보 로깅 (처음 몇 개만)
+              if (deals.length < 3) {
+                logger.info(`거래 데이터 샘플 - 아파트: ${apartment}, 동: ${dong}, 가격: ${priceStr}`);
+              }
 
               if (apartment && priceStr) {
                 const price = parsePrice(priceStr);
@@ -377,12 +403,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         }
       }
     }
+    
+    // 데이터 수집 결과 요약
+    logger.info(`전체 데이터 수집 완료 - 총 ${deals.length}건 수집됨`);
+    
     // 최신 거래일 순으로 정렬
     deals.sort((a, b) => new Date(b.deal_date).getTime() - new Date(a.deal_date).getTime());
     // 중복 제거 (아파트명+면적+층+거래일 기준)
     const uniqueDeals = deals.filter((deal, idx, arr) =>
       arr.findIndex(d => d.apartment_name === deal.apartment_name && d.area === deal.area && d.floor === deal.floor && d.deal_date === deal.deal_date) === idx
     );
+    
+    logger.info(`중복 제거 후 - ${uniqueDeals.length}건 (논현동 필터 적용됨)`);
     // 통계 계산
     const totalDeals = uniqueDeals.length;
     const avgPrice = totalDeals > 0 ? Math.round(uniqueDeals.reduce((sum, deal) => sum + deal.price_numeric, 0) / totalDeals) : 0;
