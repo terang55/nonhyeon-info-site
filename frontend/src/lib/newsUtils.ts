@@ -13,14 +13,14 @@ import React from 'react';
 export function getTypeIcon(type?: string): React.ReactNode {
   switch (type) {
     case 'blog':
-      return <span className="text-lg">📝</span>;
+      return React.createElement('span', { className: 'text-lg' }, '📝');
     case 'youtube':
-      return <span className="text-lg">🎥</span>;
+      return React.createElement('span', { className: 'text-lg' }, '🎥');
     case 'cafe':
-      return <span className="text-lg">☕</span>;
+      return React.createElement('span', { className: 'text-lg' }, '☕');
     case 'news':
     default:
-      return <span className="text-lg">📰</span>;
+      return React.createElement('span', { className: 'text-lg' }, '📰');
   }
 }
 
@@ -62,13 +62,13 @@ export function getCategoryColor(type?: string): string {
  * 카테고리별 아이콘 매핑
  */
 export const categoryIcons: { [key: string]: React.ReactNode } = {
-  '뉴스': <span className="text-base">📰</span>,
-  '블로그': <span className="text-base">📝</span>,
-  '유튜브': <span className="text-base">🎥</span>,
-  '병원': <span className="text-base">🏥</span>,
-  '약국': <span className="text-base">💊</span>,
-  '부동산': <span className="text-base">🏠</span>,
-  '학원': <span className="text-base">🎓</span>,
+  '뉴스': React.createElement('span', { className: 'text-base' }, '📰'),
+  '블로그': React.createElement('span', { className: 'text-base' }, '📝'),
+  '유튜브': React.createElement('span', { className: 'text-base' }, '🎥'),
+  '병원': React.createElement('span', { className: 'text-base' }, '🏥'),
+  '약국': React.createElement('span', { className: 'text-base' }, '💊'),
+  '부동산': React.createElement('span', { className: 'text-base' }, '🏠'),
+  '학원': React.createElement('span', { className: 'text-base' }, '🎓'),
 };
 
 /**

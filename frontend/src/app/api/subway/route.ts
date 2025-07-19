@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
   try {
     SUBWAY_API_KEY = getEnvVar('SEOUL_OPEN_API_KEY');
     console.log('🚇 지하철 API 키 검증 완료');
-  } catch (error) {
+  } catch {
     console.log('⚠️ SEOUL_OPEN_API_KEY 환경변수가 설정되지 않음 - 더미 데이터 사용');
     SUBWAY_API_KEY = undefined;
   }
