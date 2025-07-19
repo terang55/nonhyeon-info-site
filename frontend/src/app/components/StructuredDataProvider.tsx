@@ -14,11 +14,28 @@ import {
   generateBreadcrumbSchema 
 } from '@/lib/structuredData';
 
+interface RealEstateData {
+  apartment_name: string;
+  area: string;
+  floor: string;
+  price_numeric: number;
+  deal_date: string;
+}
+
+interface MedicalData {
+  name: string;
+  address: string;
+  phone?: string;
+  specialty?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 interface StructuredDataProviderProps {
   newsItems?: NewsItem[];
   category?: string;
-  realEstateData?: any[];
-  medicalData?: any[];
+  realEstateData?: RealEstateData[];
+  medicalData?: MedicalData[];
   medicalType?: 'hospital' | 'pharmacy';
   breadcrumbs?: { name: string; url: string }[];
 }
@@ -37,7 +54,7 @@ export default function StructuredDataProvider({
     const existingSchemas = document.querySelectorAll('script[data-structured-data="dynamic"]');
     existingSchemas.forEach(schema => schema.remove());
 
-    const schemas: any[] = [];
+    const schemas: Record<string, unknown>[] = [];
 
     // 뉴스 리스트 스키마
     if (newsItems && newsItems.length > 0) {

@@ -2,7 +2,7 @@
  * Core Web Vitals 모니터링 및 분석 유틸리티
  */
 
-import { getCLS, getFID, getFCP, getLCP, getTTFB, Metric } from 'web-vitals';
+import { onCLS, onINP, onFCP, onLCP, onTTFB, Metric } from 'web-vitals';
 
 // Web Vitals 메트릭 타입 정의
 export interface WebVitalsMetric {
@@ -20,7 +20,7 @@ export interface WebVitalsMetric {
 // 성능 임계값 정의 (Google 기준)
 const THRESHOLDS = {
   LCP: { good: 2500, poor: 4000 },
-  FID: { good: 100, poor: 300 },
+  INP: { good: 200, poor: 500 }, // FID 대신 INP 사용
   CLS: { good: 0.1, poor: 0.25 },
   FCP: { good: 1800, poor: 3000 },
   TTFB: { good: 800, poor: 1800 }
@@ -48,7 +48,7 @@ function logMetric(metric: Metric) {
     value: metric.value,
     rating: getRating(metric.name, metric.value),
     delta: metric.delta,
-    navigationType: (metric as any).navigationType || 'unknown',
+    navigationType: (metric as Metric & { navigationType?: string }).navigationType || 'unknown',
     timestamp: Date.now(),
     url: window.location.href,
     userAgent: navigator.userAgent
@@ -107,11 +107,11 @@ export function initWebVitals() {
   if (typeof window === 'undefined') return;
 
   try {
-    getCLS(logMetric);
-    getFID(logMetric);
-    getFCP(logMetric);
-    getLCP(logMetric);
-    getTTFB(logMetric);
+    onCLS(logMetric);
+    onINP(logMetric);
+    onFCP(logMetric);
+    onLCP(logMetric);
+    onTTFB(logMetric);
   } catch (error) {
     console.error('Web Vitals 초기화 실패:', error);
   }
@@ -139,9 +139,9 @@ export function generatePerformanceReport() {
       firstPaint: paint.find(p => p.name === 'first-paint')?.startTime || 0,
       firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
     },
-    memory: (performance as any).memory ? {
-      usedJSMemory: Math.round((performance as any).memory.usedJSMemory / 1048576), // MB
-      totalJSMemory: Math.round((performance as any).memory.totalJSMemory / 1048576), // MB
+    memory: (performance as Performance & { memory?: { usedJSMemory: number; totalJSMemory: number } }).memory ? {
+      usedJSMemory: Math.round((performance as Performance & { memory: { usedJSMemory: number; totalJSMemory: number } }).memory.usedJSMemory / 1048576), // MB
+      totalJSMemory: Math.round((performance as Performance & { memory: { usedJSMemory: number; totalJSMemory: number } }).memory.totalJSMemory / 1048576), // MB
     } : null
   };
 }
@@ -158,9 +158,9 @@ export function detectPerformanceIssues(metric: WebVitalsMetric) {
         issues.push('Largest Contentful Paint가 느립니다. 이미지 최적화나 리소스 로딩을 개선하세요.');
       }
       break;
-    case 'FID':
+    case 'INP':
       if (metric.rating === 'poor') {
-        issues.push('First Input Delay가 높습니다. JavaScript 실행 시간을 줄이세요.');
+        issues.push('Interaction to Next Paint가 높습니다. JavaScript 실행 시간을 줄이세요.');
       }
       break;
     case 'CLS':
@@ -179,7 +179,7 @@ declare global {
     gtag?: (
       command: 'config' | 'event',
       targetId: string,
-      config?: Record<string, any>
+      config?: Record<string, unknown>
     ) => void;
   }
 }

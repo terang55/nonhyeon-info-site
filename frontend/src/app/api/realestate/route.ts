@@ -352,7 +352,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               const testParsed = parser.parse(xmlText);
               logger.info(`파싱 성공! 구조: ${JSON.stringify(testParsed, null, 2)}`);
             } catch (parseError) {
-              logger.error(`파싱 실패! 에러: ${parseError.message}`);
+              logger.error(`파싱 실패! 에러: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
               logger.info(`파싱 실패한 XML: ${xmlText}`);
             }
             logger.info(`=== XML 응답 디버깅 종료 - ${yearMonth} ===`);

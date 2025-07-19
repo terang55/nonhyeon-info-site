@@ -128,10 +128,18 @@ export function generateNewsListSchema(newsItems: NewsItem[], category: string =
   };
 }
 
+interface RealEstateItem {
+  apartment_name: string;
+  area: string;
+  floor: string;
+  price_numeric: number;
+  deal_date: string;
+}
+
 /**
  * 부동산 정보용 RealEstateListing 스키마 생성
  */
-export function generateRealEstateSchema(realEstateData: any[]) {
+export function generateRealEstateSchema(realEstateData: RealEstateItem[]) {
   if (!realEstateData || realEstateData.length === 0) return null;
 
   return {
@@ -176,10 +184,19 @@ export function generateRealEstateSchema(realEstateData: any[]) {
   };
 }
 
+interface MedicalFacility {
+  name: string;
+  address: string;
+  phone?: string;
+  specialty?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 /**
  * 의료기관 정보용 스키마 생성
  */
-export function generateMedicalSchema(medicalData: any[], type: 'hospital' | 'pharmacy') {
+export function generateMedicalSchema(medicalData: MedicalFacility[], type: 'hospital' | 'pharmacy') {
   if (!medicalData || medicalData.length === 0) return null;
 
   const schemaType = type === 'hospital' ? 'Hospital' : 'Pharmacy';

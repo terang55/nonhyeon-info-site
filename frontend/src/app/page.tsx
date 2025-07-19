@@ -7,9 +7,10 @@ import { Metadata } from 'next';
 export async function generateMetadata({ 
   searchParams 
 }: { 
-  searchParams: { category?: string } 
+  searchParams: Promise<{ category?: string }> 
 }): Promise<Metadata> {
-  const category = searchParams.category;
+  const params = await searchParams;
+  const category = params.category;
   
   if (category && category !== '전체') {
     return generatePageMetadata('category', { category });

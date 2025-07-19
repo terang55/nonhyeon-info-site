@@ -298,8 +298,15 @@ export function generatePageMetadata(
  * @param commonKeywords - 공통 키워드
  * @returns 카테고리별 설정 객체
  */
-function generateCategoryMetadata(category: string, commonKeywords: string[]) {
-  const categoryConfig: Record<string, any> = {
+interface PageConfig {
+  title: string;
+  description: string;
+  keywords: string[];
+  path: string;
+}
+
+function generateCategoryMetadata(category: string, commonKeywords: string[]): PageConfig {
+  const categoryConfig: Record<string, PageConfig> = {
     '뉴스': {
       title: `인천 논현동 뉴스 | 인천논현라이프`,
       description: '인천 남동구 논현동 최신 뉴스와 지역 소식을 실시간으로 확인하세요.',

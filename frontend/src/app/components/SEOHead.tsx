@@ -143,9 +143,4 @@ export default function SEOHead({
   return null; // 이 컴포넌트는 사이드 이펙트만 처리
 }
 
-// 타입 확장 (전역 타입 정의)
-declare global {
-  interface Window {
-    gtag: (...args: unknown[]) => void;
-  }
-} 
+// gtag 타입은 analytics.ts에서 정의됨 
