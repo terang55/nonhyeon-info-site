@@ -276,7 +276,7 @@ function makeHourRange(start?: string, end?: string): string | undefined {
 }
 
 // 1) Kakao 주소 지오코딩 유틸 추가 -------------------------------
-async function geocodeAddress(address: string) {
+async function geocodeAddress(address: string, KAKAO_API_KEY?: string) {
   if (!KAKAO_API_KEY) return null;
   try {
     const res = await fetch(
@@ -502,7 +502,7 @@ export async function GET(request: NextRequest) {
 
         // 좌표가 없으면 주소 보정
         if (isNaN(lat) || isNaN(lon)) {
-          const fixed = await geocodeAddress(item.addr);
+          const fixed = await geocodeAddress(item.addr, KAKAO_API_KEY);
           if (!fixed) continue;
           lat = fixed.lat;
           lon = fixed.lon;
@@ -586,7 +586,7 @@ export async function GET(request: NextRequest) {
 
         // 좌표가 없으면 주소로 보정
         if (isNaN(lat) || isNaN(lon)) {
-          const fixed = await geocodeAddress(item.dutyAddr);
+          const fixed = await geocodeAddress(item.dutyAddr, KAKAO_API_KEY);
           if (!fixed) continue;
           lat = fixed.lat;
           lon = fixed.lon;
@@ -598,7 +598,7 @@ export async function GET(request: NextRequest) {
 
         // 좌표가 없거나 반경 밖이면 Kakao 지오코딩으로 보정
         if (isNaN(lat) || isNaN(lon)) {
-          const fixed = await geocodeAddress(item.dutyAddr);
+          const fixed = await geocodeAddress(item.dutyAddr, KAKAO_API_KEY);
           if (!fixed) continue;   // 보정 실패 → 제외
           ({ lat, lon } = fixed);
         }
@@ -606,7 +606,7 @@ export async function GET(request: NextRequest) {
         // 거리 계산
         let distance = calcDistance(lat, lon);
         if (distance > radius) {
-          const fixed = await geocodeAddress(item.dutyAddr); // 좌표 오등록 의심 → 재보정
+          const fixed = await geocodeAddress(item.dutyAddr, KAKAO_API_KEY); // 좌표 오등록 의심 → 재보정
           if (fixed) {
             ({ lat, lon } = fixed);
             distance = calcDistance(lat, lon);
