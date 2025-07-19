@@ -130,8 +130,8 @@ export function generatePerformanceReport() {
     page: window.location.pathname,
     timestamp: Date.now(),
     navigation: {
-      domContentLoaded: Math.round(navigation.domContentLoadedEventEnd - navigation.navigationStart),
-      loadComplete: Math.round(navigation.loadEventEnd - navigation.navigationStart),
+      domContentLoaded: Math.round(navigation.domContentLoadedEventEnd - navigation.fetchStart),
+      loadComplete: Math.round(navigation.loadEventEnd - navigation.fetchStart),
       networkLatency: Math.round(navigation.responseStart - navigation.requestStart),
       serverResponseTime: Math.round(navigation.responseEnd - navigation.requestStart),
     },
