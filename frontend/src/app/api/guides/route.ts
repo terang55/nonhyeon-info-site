@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     // 모든 가이드 목록 요청
     const guides: GuideContent[] = [];
 
-    function scanDirectory(dir: string, categoryName?: string) {
+    function scanDirectory(dir: string) {
       if (!fs.existsSync(dir)) return;
 
       const items = fs.readdirSync(dir);
