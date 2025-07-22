@@ -16,6 +16,9 @@ export interface GuideContent {
   content: string;        // HTML 변환된 콘텐츠
   rawContent: string;     // 원본 마크다운
   relatedGuides: string[];
+  author?: string;
+  views?: number;
+  likes?: number;
   seasonal?: {
     season: 'spring' | 'summer' | 'fall' | 'winter' | 'all';
     months: number[];
