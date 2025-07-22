@@ -164,7 +164,7 @@ function getArticleSection(type?: string): string {
  * @returns 메타데이터 객체
  */
 export function generatePageMetadata(
-  page: 'home' | 'realestate' | 'subway' | 'academy' | 'category',
+  page: 'home' | 'realestate' | 'subway' | 'academy' | 'category' | 'guides',
   customData?: {
     title?: string;
     description?: string;
@@ -229,6 +229,15 @@ export function generatePageMetadata(
         '인천논현동 학원', '논현동 교육', '논현동 어린이집', '논현동 유치원'
       ],
       path: '/academy'
+    },
+    guides: {
+      title: '논현동 생활 가이드 | 인천논현라이프',
+      description: '인천 남동구 논현동 신규 입주자를 위한 완벽한 정착 가이드. 이사, 부동산, 교통, 맛집 정보까지 한번에!',
+      keywords: [
+        ...commonKeywords,
+        '인천논현동 가이드', '논현동 이사', '논현동 정착', '에코메트로 가이드', '논현동 맛집 가이드', '수인분당선 이용법'
+      ],
+      path: '/guides'
     },
     category: {
       title: '인천논현라이프 | 카테고리별 정보',

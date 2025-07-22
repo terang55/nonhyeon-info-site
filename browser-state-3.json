@@ -1,0 +1,75 @@
+{
+  "cookies": [
+    {
+      "name": "SNID",
+      "value": "ABablncWXTBvV92q7sTsjhI1esUQG0mpjrcx7iUnvW_OKiSf3yPoWNkuQV9otLIDNHXuvrJfxzMSStYlIpXLtNBPWtQ_tQD4Aw",
+      "domain": ".google.com",
+      "path": "/verify",
+      "expires": 1768913079.633161,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "AEC",
+      "value": "AVh_V2gRVXALoE4pCxYb_d6EFbxqMnpcsXtYhuyrLmAddNCOfYw2qhMG11g",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768653879.945376,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "NID",
+      "value": "525=hL_90t8MgJwnpq3_FdcDictEJYqS4XCFip8Cscpl2AVc_dY4byO7uElVKP9POg0M8-2XwJF5ye7_8Ey73UnhQPZjV9hrG-voWcAfVJ_sEF9GlJ5ZBLjZptG_6XA8KhZEjxxQ8WO24pYli3U8eEDWmekVDyLILD-2XdABp9_MfQMv1eC4QoxF3xjNr5hw7PX5SMI9uNmg0amcPQnYnFq2wXSfCXSaRkrITdjSxCkp0we9oYdqRTN5JGbS2WVRaerx4pZ9",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768913080.173312,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "DV",
+      "value": "g_tRIwiFS6IU0J-HU_sc0efSEb3Qghk",
+      "domain": "www.google.com",
+      "path": "/",
+      "expires": 1753103006,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.google.com",
+      "localStorage": [
+        {
+          "name": "sb_wiz.zpc.gws-wiz.",
+          "value": "{\"0\":[],\"1\":{\"av\":\"-2836980068406233222\",\"q\":\"byBF0Iv-VTqpRanElR2zfkOEPp8\"}}"
+        },
+        {
+          "name": "sb_wiz.pq_tm_hp",
+          "value": "1753102558564"
+        },
+        {
+          "name": "sb_wiz.pq",
+          "value": "논현동 가을 축제 행사"
+        },
+        {
+          "name": "sb_wiz.sr_di",
+          "value": "null"
+        },
+        {
+          "name": "sb_wiz.qc",
+          "value": "8"
+        },
+        {
+          "name": "sb_wiz.sc_pq",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}

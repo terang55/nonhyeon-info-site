@@ -1,0 +1,65 @@
+{
+  "cookies": [
+    {
+      "name": "SNID",
+      "value": "ABablnfNNJl1-7QnkGFX2oAN8SaJpa-IsB1gQSIiZ3FAJFIm75x8slxdQJzpeIt0esF-fE9YXzijKYwKN4OUFp0r-1k2siMS_Gk",
+      "domain": ".google.com",
+      "path": "/verify",
+      "expires": 1768913079.660097,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "AEC",
+      "value": "AVh_V2ix9tCio5bhz2GdrenZFMNxX5PTHJYGnxNyg_RkAskI1Av-BmsmG_E",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768653879.975342,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "NID",
+      "value": "525=ErpGB_9RtWiA2MXRJa3rOQ-Ayn7qI8Ag4cI2jZhTbjUeee4CyMvr6Oc8eu3O7v4ZCx80b-az3aCcZnOB7VBZ0Cgf2rCchbwB15gOCvmxailBHsY3FtU_mjeFqtfo4DA_VGPh0oCVcpOz51b2M2QcFIY-8l56rb0lR0ppMJJ-_QGgqsyH5JnicmFLH80bKkbt3FGt7KpBsKnkJR-ANMl3QmlnFa1hAO7Jpg9s83uaKSCvgTQISM-uUisZIXDuPHYqQbkdmw",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768913079.313002,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.google.com",
+      "localStorage": [
+        {
+          "name": "sb_wiz.zpc.gws-wiz.",
+          "value": "{\"0\":[[\"수인분당선 시간표 2025\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}],[\"수인분당선 노선도\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}],[\"수인분당선 배차간격 디시\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}],[\"수인분당선 요금 계산기\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}],[\"수인분당선 막차\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}],[\"논현역 7호선\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}],[\"논현역 지하철 노선도\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}],[\"논현역 몇호선\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}],[\"신분당선 논현역\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}],[\"신분당선 신논현역 막차\",0,[512,308,468,357,439,650,362,394],{\"zl\":40009}]],\"1\":{\"ag\":{\"a\":{\"40009\":[\"최근 검색어와 관련이 있음\"]}},\"av\":\"-5650271427196257807\",\"q\":\"9WcgE8CMBcD9z8FsblRUg43VoXI\"}}"
+        },
+        {
+          "name": "sb_wiz.pq_tm_hp",
+          "value": "1753135599235"
+        },
+        {
+          "name": "sb_wiz.pq",
+          "value": "수인분당선 논현역 K262 역정보"
+        },
+        {
+          "name": "sb_wiz.sr_di",
+          "value": "GMT2q4zuy4zjrAEYu7mNxc2nmIYZGLDmovqXgJXL2wEYpfb-5OOUq-EeGIiFpO6Em8PFLQ"
+        },
+        {
+          "name": "sb_wiz.qc",
+          "value": "16"
+        },
+        {
+          "name": "sb_wiz.sc_pq",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}

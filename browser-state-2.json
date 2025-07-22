@@ -1,0 +1,61 @@
+{
+  "cookies": [
+    {
+      "name": "SNID",
+      "value": "ABablnf5gIulq5uZcw782dSr_C40gYp4SEFUfYo2f-ZOQ5eUzc-RcFdkofwKklYYaU3wz3eWcCZaIlPH19HnawwBSiBTqc8hHw",
+      "domain": ".google.com",
+      "path": "/verify",
+      "expires": 1768913079.075963,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "AEC",
+      "value": "AVh_V2gbu0X0Gcc_tZwGjqUSvn0uWnqk2TTuOeLfbtDRrB3R41I7BG34ng",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768653879.805789,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "NID",
+      "value": "525=agtrzGTlAw1exnaeHK73zgZa5Dtn55wP55IIBeOb_gF3-Y071CiJdwU4wniYwzOk8903Fo7FqRr_Au9fhxGk8wTh11ayPiidNldgfn_dftu7plS-t9sbDA4LLHfami8zZvf2AU_6VwTl4lsdjKpWAFoI7W9xa_kMWp28ovmMM0AwFXVfIZmT5DBlI44g7ne48KXSrZzPoBe623lclGVWSrPz8iTI9ixwQ3sgYR2jVcRKWBSUoPccOOh9d7fajuBgu4zQ",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768913079.359969,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.google.com",
+      "localStorage": [
+        {
+          "name": "sb_wiz.sr_di",
+          "value": "null"
+        },
+        {
+          "name": "sb_wiz.pq_tm_hp",
+          "value": "1753135274427"
+        },
+        {
+          "name": "sb_wiz.qc",
+          "value": "12"
+        },
+        {
+          "name": "sb_wiz.sc_pq",
+          "value": ""
+        },
+        {
+          "name": "sb_wiz.pq",
+          "value": "인천 논현동 주공아파트 1단지 2단지 13단지"
+        }
+      ]
+    }
+  ]
+}

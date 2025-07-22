@@ -1,0 +1,65 @@
+{
+  "cookies": [
+    {
+      "name": "SNID",
+      "value": "ABablncFzvwS_EQyYpOSfw3CIWJckkDAmc3APY_vzRY-V3aanJ45wspDf3AjzbCDWHiRxVwTfLDf7Pfsqrvz-Rpo8yXYFqWoxKM",
+      "domain": ".google.com",
+      "path": "/verify",
+      "expires": 1768913079.923543,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "AEC",
+      "value": "AVh_V2iWreHpLvJTen-9yzwAremreiKE0dYPQvRu0q_Z3wy6khFR0CNFsQ",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768653879.849118,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "NID",
+      "value": "525=GrD4UH0IY1Ckna9rX3HrCTFkiQOk2ruG30J2T3vZ9Ba4gf3K5wfZ8XQicRhscfF--BEYA8AflK8gRy6Ug0ruWrfNRpGVkXcceZ-8nvWGbKOweGQT_as8Jq0IgzY299Wug8zo_0P4gSwp8b0CVdWaNNLRHqvM7L-dybdN67YkDJPrfz_cfK7Gf8vkhzvqrsQ-wpHc3TA1zQR5hSkT9XMrXrEZfr2s8_A-MzGhHVxTrOIzMMrR9pVR20CdhipYLziqcsPw",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768913079.271798,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.google.com",
+      "localStorage": [
+        {
+          "name": "sb_wiz.zpc.gws-wiz.",
+          "value": "{\"0\":[],\"1\":{\"av\":\"7771214640559000933\",\"q\":\"P7C-1u2SDMMh222yktuUy2hhhq8\"}}"
+        },
+        {
+          "name": "sb_wiz.pq_tm_hp",
+          "value": "1753135599105"
+        },
+        {
+          "name": "sb_wiz.pq",
+          "value": "수인분당선 논현역 수원역 거리 소요시간"
+        },
+        {
+          "name": "sb_wiz.sr_di",
+          "value": "null"
+        },
+        {
+          "name": "sb_wiz.qc",
+          "value": "16"
+        },
+        {
+          "name": "sb_wiz.sc_pq",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}

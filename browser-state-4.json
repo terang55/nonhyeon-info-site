@@ -1,0 +1,75 @@
+{
+  "cookies": [
+    {
+      "name": "SNID",
+      "value": "ABablndT6Lvb4aoCWM1w4fAJfOA2st4wXCX1qFNIuP-xcpkhvWN_pPJ2H5rGNnzdlChvZwGe-hdgAlm1zkZ3kIeqJl0wtDXMn0c",
+      "domain": ".google.com",
+      "path": "/verify",
+      "expires": 1768913079.752111,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "AEC",
+      "value": "AVh_V2h9ipeJAQwYCfqt1UkebYBdp-FCuiLj3i9sxWRu-8nZxyDHIgXvhHM",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768653879.909862,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "NID",
+      "value": "525=cgBGaf2kzsuBsYBOzP4L-cCnvdob-L0sp8B4BlVTb919jOGOgsNM3WQRHPufYlWMgLZcDuacT3sVZGMrxE1N7GAB3uqA7uJ7kdqu_siaKLUc6qHE1sDSEhWAI0iLTvWpBOJlLTrCwNx4UVIclP0Fz3rYdc0eY2OUboTp77gj_A3FOKYXG3kVBfPEk1Gl4VglmUmKIFd_hlaMtwx_kNuBnOmTaxkDUZmjQRkM1msehchh4fGAqo_5a9EUvJslews7EuUAFA",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1768913079.350071,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "DV",
+      "value": "44dTX0LUjqof0J-HU_sc0efiIb3Qghk",
+      "domain": "www.google.com",
+      "path": "/",
+      "expires": 1753103007,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.google.com",
+      "localStorage": [
+        {
+          "name": "sb_wiz.zpc.gws-wiz.",
+          "value": "{\"0\":[],\"1\":{\"av\":\"760223820401269756\",\"q\":\"_9l29smzljBLtKCTmoI7PcfanIg\"}}"
+        },
+        {
+          "name": "sb_wiz.pq_tm_hp",
+          "value": "1753102558596"
+        },
+        {
+          "name": "sb_wiz.pq",
+          "value": "소래포구 대하축제 볼거리 맛집"
+        },
+        {
+          "name": "sb_wiz.sr_di",
+          "value": "null"
+        },
+        {
+          "name": "sb_wiz.qc",
+          "value": "8"
+        },
+        {
+          "name": "sb_wiz.sc_pq",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}

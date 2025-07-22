@@ -15,17 +15,25 @@ export default function BottomNavigation() {
   const router = useRouter();
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
 
   const navItems: NavItem[] = useMemo(() => [
     { icon: '🏠', label: '홈', path: '/' },
-    { icon: '🏥', label: '의료', path: '/', isCategory: true, categoryName: '병원' },
+    { icon: '📋', label: '가이드', path: '/guides' },
     { icon: '🏢', label: '부동산', path: '/realestate' },
     { icon: '🎓', label: '학원', path: '/academy' },
     { icon: '🚇', label: '교통', path: '/subway' }
   ], []);
 
+  // 클라이언트 마운트 감지
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // 현재 경로에 따라 활성 아이템 설정
   useEffect(() => {
+    if (!mounted) return;
+    
     const currentItem = navItems.find(item => {
       if (item.path === pathname) return true;
       if (pathname === '/' && item.isCategory) {
@@ -38,7 +46,7 @@ export default function BottomNavigation() {
     });
     
     setActiveItem(currentItem?.path + (currentItem?.categoryName || '') || '/');
-  }, [pathname, navItems]);
+  }, [pathname, navItems, mounted]);
 
   const handleNavClick = (item: NavItem) => {
     if (item.isCategory && item.categoryName) {
@@ -55,6 +63,31 @@ export default function BottomNavigation() {
     const itemKey = item.path + (item.categoryName || '');
     return activeItem === itemKey;
   };
+
+  // SSR 중에는 빈 컴포넌트 렌더링하여 Hydration 에러 방지
+  if (!mounted) {
+    return (
+      <>
+        {/* 하단 네비게이션 바 - 로딩 중 */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden">
+          <div className="flex justify-around items-center py-2 pb-safe px-2">
+            {/* 로딩 스켈레톤 */}
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center py-3 px-3 min-h-[56px] min-w-[56px] justify-center rounded-lg"
+              >
+                <div className="w-6 h-6 bg-gray-200 rounded mb-1"></div>
+                <div className="w-8 h-3 bg-gray-200 rounded"></div>
+              </div>
+            ))}
+          </div>
+        </nav>
+        {/* 하단 네비게이션 바 공간 확보를 위한 패딩 */}
+        <div className="h-20 md:hidden" aria-hidden="true"></div>
+      </>
+    );
+  }
 
   return (
     <>

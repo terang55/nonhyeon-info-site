@@ -330,3 +330,20 @@ The crawler uses intelligent duplicate detection:
 		
 ** MCP 서버 제거가 필요할 때 예시: **
 claude mcp remove youtube-mcp
+
+
+
+
+### Guide Content Reliability Standards
+- **정보 검증 필수**: 가이드 파일 작성/업데이트 시 반드시 신뢰성 있는 내용만 포함
+- **크로스체크 의무**: 다음 MCP 도구들을 활용하여 정보 검증:
+  - `g-search-mcp`: Google 검색으로 최신 정보 확인
+  - `naver-search`: 네이버 검색으로 한국 현지 정보 검증
+  - `perplexity-search`: Perplexity로 종합적 사실 확인
+- **검증 프로세스**: 
+  1. 주요 사실과 수치는 최소 2개 이상의 다른 소스에서 확인
+  2. 부동산 시세, 업체 정보, 운영시간 등은 공식 출처 우선
+  3. 추측성 내용이나 확인되지 않은 정보는 절대 포함 금지
+- **신뢰성 기준**: 사람들이 믿을 수 있고 실제로 도움이 되는 정보만 작성
+- **업데이트 주기**: 시간에 민감한 정보(가격, 운영시간 등)는 주기적 검증 필수
+- 절대로 서울 강남구 논현동 정보와 섞이지 않게 철저히 검증필요.
