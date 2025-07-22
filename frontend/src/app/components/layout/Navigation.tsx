@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function Navigation() {
   return (
@@ -10,13 +11,13 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-center py-3 sm:py-4 gap-2 sm:gap-6">
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
-            <a 
+            <Link 
               href="/guides" 
               className="flex items-center space-x-2 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors min-h-[44px] w-full sm:w-auto justify-center"
             >
               <span className="text-lg">📋</span>
               <span className="text-sm font-medium">생활 가이드</span>
-            </a>
+            </Link>
             <a 
               href="/realestate" 
               className="flex items-center space-x-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors min-h-[44px] w-full sm:w-auto justify-center"

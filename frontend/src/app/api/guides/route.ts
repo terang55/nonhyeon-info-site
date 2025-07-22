@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { GuideContent, GuideFrontMatter, GUIDE_CATEGORIES } from '@/types/guides';
+import { GuideContent } from '@/types/guide';
 
 export async function GET(request: NextRequest) {
   try {
@@ -46,9 +46,9 @@ export async function GET(request: NextRequest) {
     }
 
     // 모든 가이드 목록 요청
-    const guides: any[] = [];
+    const guides: GuideContent[] = [];
 
-    function scanDirectory(dir: string, categoryName: string = '') {
+    function scanDirectory(dir: string, categoryName?: string) {
       if (!fs.existsSync(dir)) return;
 
       const items = fs.readdirSync(dir);
@@ -62,26 +62,30 @@ export async function GET(request: NextRequest) {
         } else if (item.endsWith('.md')) {
           try {
             const fileContents = fs.readFileSync(fullPath, 'utf8');
-            const { data: frontMatter } = matter(fileContents);
+            const { data: frontMatter, content } = matter(fileContents);
             
             const slug = item.replace('.md', '');
             const relativePath = path.relative(guidesDirectory, fullPath);
             const pathParts = relativePath.split(path.sep);
             const actualCategory = pathParts[0];
 
-            guides.push({
+            const guideData: GuideContent = {
+              title: frontMatter.title || '제목 없음',
               slug,
+              description: frontMatter.description || '',
               category: actualCategory,
-              frontMatter: {
-                title: frontMatter.title || '제목 없음',
-                description: frontMatter.description || '',
-                tags: frontMatter.tags || [],
-                lastUpdated: frontMatter.lastUpdated || null,
-                readTime: frontMatter.readTime || '5분',
-                ...frontMatter
-              },
-              path: `/guides/${actualCategory}/${slug}`
-            });
+              keywords: frontMatter.keywords || [],
+              tags: frontMatter.tags || [],
+              featured: frontMatter.featured || false,
+              difficulty: frontMatter.difficulty || 'medium',
+              readingTime: frontMatter.readingTime || Math.ceil(content.length / 1000 * 3),
+              lastUpdated: frontMatter.lastUpdated || new Date().toISOString().split('T')[0],
+              content: '',
+              rawContent: content,
+              relatedGuides: frontMatter.relatedGuides || []
+            };
+            
+            guides.push(guideData);
           } catch (error) {
             console.error(`Error processing ${fullPath}:`, error);
           }

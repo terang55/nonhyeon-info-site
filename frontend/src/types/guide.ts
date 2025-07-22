@@ -40,10 +40,10 @@ export interface GuideMetadata {
     description: string;
     image: string;
   };
-  structuredData: any;
-  howToSchema: any;
-  faqSchema?: any;
-  localBusinessSchema?: any;
+  structuredData: Record<string, unknown>;
+  howToSchema: Record<string, unknown>;
+  faqSchema?: Record<string, unknown>;
+  localBusinessSchema?: Record<string, unknown>;
 }
 
 export interface TocItem {

@@ -13,7 +13,7 @@ export interface GuideMetadata {
   readingTime?: number;
   lastUpdated?: string;
   relatedGuides?: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface LoadedGuide {

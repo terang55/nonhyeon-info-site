@@ -1,25 +1,9 @@
 /**
- * 가이드 시스템 타입 정의
+ * 가이드 시스템 타입 정의 - 호환성 유지용
+ * 실제 타입 정의는 @/types/guide.ts를 사용
  */
 
-export interface GuideContent {
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  keywords: string[];
-  tags: string[];
-  featured: boolean;
-  difficulty: 'easy' | 'medium' | 'hard';
-  readingTime: number;
-  lastUpdated: string;
-  content: string;        // HTML 변환된 콘텐츠
-  rawContent: string;     // 원본 마크다운
-  relatedGuides: string[];
-  author?: string;
-  views?: number;
-  likes?: number;
-}
+export type { GuideContent, GuideMetadata, GuideCategory } from '@/types/guide';
 
 export interface GuideFrontMatter {
   title: string;
@@ -32,16 +16,7 @@ export interface GuideFrontMatter {
   lastUpdated?: string;
   relatedGuides?: string[];
   author?: string;
-  [key: string]: any;
-}
-
-export interface GuideCategory {
-  name: string;
-  slug: string;
-  description: string;
-  icon: string;
-  color: string;
-  guides: GuideContent[];
+  [key: string]: unknown;
 }
 
 export interface GuideNavigation {

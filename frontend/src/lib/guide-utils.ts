@@ -1,4 +1,4 @@
-import { GuideContent, GuideCategory, GuideMetadata, NONHYEON_GUIDE_CATEGORIES } from '@/types/guide';
+import { GuideContent, GuideCategory, GuideMetadata } from '@/types/guide';
 
 const BASE_URL = 'https://nonhyeon.life';
 
