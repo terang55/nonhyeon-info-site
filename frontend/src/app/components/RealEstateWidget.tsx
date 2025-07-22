@@ -209,101 +209,6 @@ export default function RealEstateWidget({ deals, newDeals, apartmentStats, onAp
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 검색창 */}
-      <section className="bg-white rounded-xl shadow p-6">
-        <div className="flex items-center gap-4">
-          <div className="flex-1 relative" ref={autoCompleteRef}>
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="단지명을 입력하세요 (예: 더타워)"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              onKeyDown={handleKeyDown}
-              onFocus={() => {
-                if (searchTerm.trim() && filteredAutoComplete.length > 0) {
-                  setShowAutoComplete(true);
-                }
-              }}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            />
-            
-            {/* 자동완성 드롭다운 */}
-            {showAutoComplete && filteredAutoComplete.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-                {filteredAutoComplete.map((apartmentName, index) => (
-                  <div
-                    key={apartmentName}
-                    className={`px-4 py-3 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0 ${
-                      index === selectedAutoCompleteIndex 
-                        ? 'bg-blue-50 text-blue-700' 
-                        : 'hover:bg-gray-50'
-                    }`}
-                    onClick={() => {
-                      haptic('medium'); // 클릭 시 중간 진동
-                      selectApartment(apartmentName);
-                    }}
-                    onMouseEnter={() => setSelectedAutoCompleteIndex(index)}
-                  >
-                    <div className="font-medium text-sm">
-                      {/* 검색어 하이라이팅 */}
-                      {searchTerm.trim() ? (
-                        apartmentName.split(new RegExp(`(${searchTerm})`, 'gi')).map((part, i) =>
-                          part.toLowerCase() === searchTerm.toLowerCase() ? (
-                            <span key={i} className="bg-yellow-200 font-semibold">{part}</span>
-                          ) : (
-                            <span key={i}>{part}</span>
-                          )
-                        )
-                      ) : (
-                        apartmentName
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          {searchTerm && (
-            <button
-              onClick={() => {
-                setSearchTerm('');
-                setShowAutoComplete(false);
-                setSelectedAutoCompleteIndex(-1);
-              }}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50"
-            >
-              초기화
-            </button>
-          )}
-        </div>
-      </section>
-
-      {/* 통계 카드 */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl shadow p-4 text-center">
-          <div className="text-2xl font-bold text-blue-600">{statistics.avgPriceText}</div>
-          <div className="text-sm text-gray-500 mt-1">평균가</div>
-        </div>
-        <div className="bg-white rounded-xl shadow p-4 text-center">
-          <div className="text-2xl font-bold text-red-600">{statistics.maxPriceText}</div>
-          <div className="text-sm text-gray-500 mt-1">최고가</div>
-        </div>
-        <div className="bg-white rounded-xl shadow p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{statistics.minPriceText}</div>
-          <div className="text-sm text-gray-500 mt-1">최저가</div>
-        </div>
-        <div className="bg-white rounded-xl shadow p-4 text-center">
-          <div className="text-2xl font-bold text-gray-800">{statistics.totalCount}건</div>
-          <div className="text-sm text-gray-500 mt-1">총 거래</div>
-        </div>
-      </section>
-
       {/* 신규 거래 섹션 */}
       {!selectedApartment && newDeals.length > 0 && (
         <section className="bg-white rounded-xl shadow p-6">
@@ -435,6 +340,101 @@ export default function RealEstateWidget({ deals, newDeals, apartmentStats, onAp
           </div>
         </section>
       </div>
+
+      {/* 단지 검색 섹션 */}
+      <section className="bg-white rounded-xl shadow p-6">
+        <div className="flex items-center gap-4">
+          <div className="flex-1 relative" ref={autoCompleteRef}>
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="단지명을 입력하세요 (예: 더타워)"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onKeyDown={handleKeyDown}
+              onFocus={() => {
+                if (searchTerm.trim() && filteredAutoComplete.length > 0) {
+                  setShowAutoComplete(true);
+                }
+              }}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+            
+            {/* 자동완성 드롭다운 */}
+            {showAutoComplete && filteredAutoComplete.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                {filteredAutoComplete.map((apartmentName, index) => (
+                  <div
+                    key={apartmentName}
+                    className={`px-4 py-3 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0 ${
+                      index === selectedAutoCompleteIndex 
+                        ? 'bg-blue-50 text-blue-700' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => {
+                      haptic('medium'); // 클릭 시 중간 진동
+                      selectApartment(apartmentName);
+                    }}
+                    onMouseEnter={() => setSelectedAutoCompleteIndex(index)}
+                  >
+                    <div className="font-medium text-sm">
+                      {/* 검색어 하이라이팅 */}
+                      {searchTerm.trim() ? (
+                        apartmentName.split(new RegExp(`(${searchTerm})`, 'gi')).map((part, i) =>
+                          part.toLowerCase() === searchTerm.toLowerCase() ? (
+                            <span key={i} className="bg-yellow-200 font-semibold">{part}</span>
+                          ) : (
+                            <span key={i}>{part}</span>
+                          )
+                        )
+                      ) : (
+                        apartmentName
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          {searchTerm && (
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setShowAutoComplete(false);
+                setSelectedAutoCompleteIndex(-1);
+              }}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              초기화
+            </button>
+          )}
+        </div>
+      </section>
+
+      {/* 통계 카드 */}
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl shadow p-4 text-center">
+          <div className="text-2xl font-bold text-blue-600">{statistics.avgPriceText}</div>
+          <div className="text-sm text-gray-500 mt-1">평균가</div>
+        </div>
+        <div className="bg-white rounded-xl shadow p-4 text-center">
+          <div className="text-2xl font-bold text-red-600">{statistics.maxPriceText}</div>
+          <div className="text-sm text-gray-500 mt-1">최고가</div>
+        </div>
+        <div className="bg-white rounded-xl shadow p-4 text-center">
+          <div className="text-2xl font-bold text-green-600">{statistics.minPriceText}</div>
+          <div className="text-sm text-gray-500 mt-1">최저가</div>
+        </div>
+        <div className="bg-white rounded-xl shadow p-4 text-center">
+          <div className="text-2xl font-bold text-gray-800">{statistics.totalCount}건</div>
+          <div className="text-sm text-gray-500 mt-1">총 거래</div>
+        </div>
+      </section>
     </div>
   );
 }
