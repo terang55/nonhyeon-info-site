@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
         const stat = fs.statSync(fullPath);
 
         if (stat.isDirectory()) {
-          scanDirectory(fullPath, item);
+          scanDirectory(fullPath);
         } else if (item.endsWith('.md')) {
           try {
             const fileContents = fs.readFileSync(fullPath, 'utf8');
