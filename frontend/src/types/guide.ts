@@ -45,8 +45,8 @@ export interface GuideMetadata {
   };
   structuredData: Record<string, unknown>;
   howToSchema: Record<string, unknown>;
-  faqSchema?: Record<string, unknown>;
-  localBusinessSchema?: Record<string, unknown>;
+  faqSchema?: Record<string, unknown> | null;
+  localBusinessSchema?: Record<string, unknown> | null;
 }
 
 export interface TocItem {
